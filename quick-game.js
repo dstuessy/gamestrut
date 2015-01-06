@@ -9589,10 +9589,10 @@ Game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
   * @author Daniel Stuessy
   * @description An html5 canvas video game framework.
   *
-  * This work of Daniel Stuessy and of the authors of 
-  * Mousetrap.js, and Box2dWeb.js. The two libraries are
-  * used to provide a video game framework that developers can use
-  * to save development time. 
+  * This work of Daniel Stuessy uses the libraries 
+  * Mousetrap.js and Box2dWeb.js. 
+  * They are used to provide a video game framework 
+  * that developers can use to save development time. 
   * 
   * Hopefully this will be of use to someone. :)
   *
