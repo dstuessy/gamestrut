@@ -4,6 +4,13 @@ define([
 'libs/game/entities/entityMethods'
 ], function (box2d, entityMethods) {
 
+   /**
+   	* Animate Entity Object 
+   	*
+   	* Represents an entity in a 'level'.
+   	*
+   	* @type {object} 
+   	*/
    var AnimateEntity = function (properties) {
 
        /* General Stuff */

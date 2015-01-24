@@ -12,7 +12,7 @@
    },
    baseUrl: "./",
    name: "Game",
-   out: "../../quick-game.min.js",
+   out: "../../gamestrut.min.js",
    transformAMDChecks: false,
    preserveLicenseComments: true,
    onModuleBundleComplete: function (data) {

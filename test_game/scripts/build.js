@@ -12,7 +12,7 @@
    },
    baseUrl: "./",
    name: "Game",
-   out: "../../quick-game.js",
+   out: "../../gamestrut.js",
    optimize: 'none',
    transformAMDChecks: false,
    preserveLicenseComments: true,

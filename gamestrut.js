@@ -9510,6 +9510,13 @@ libs_game_entities_entityMethods = function (box2d, key) {
   return entityMethods;
 }(libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key);
 libs_game_entities_animateEntity = function (box2d, entityMethods) {
+  /**
+  * Animate Entity Object 
+  *
+  * Represents an entity in a 'level'.
+  *
+  * @type {object} 
+  */
   var AnimateEntity = function (properties) {
     /* General Stuff */
     this.id = properties.id;
@@ -9982,7 +9989,7 @@ Game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     };
     /**
      * Sets the current level of the game
-     * @param {[type]} lvlID [description]
+     * @param {number} lvlID [description]
      */
     this.setCurrentLevel = function (lvlID) {
       level = levels[lvlID];

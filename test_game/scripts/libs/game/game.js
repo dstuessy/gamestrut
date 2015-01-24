@@ -431,7 +431,7 @@ define([
 
       /**
        * Sets the current level of the game
-       * @param {[type]} lvlID [description]
+       * @param {number} lvlID [description]
        */
       this.setCurrentLevel = function(lvlID){
           level = levels[lvlID];
