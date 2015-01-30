@@ -4,6 +4,8 @@ gamestrut.js
 ### Todo list:
 
 * "z-indexed" background entities.
+* Nested entities e.g. TextEntity within an Animate Entity.
+* Maybe entity groups?
 * Animated background entities.
 * Proper implementation of sprite-based animation.
 * Clean-up redundant/dead code.
@@ -37,14 +39,32 @@ To get started, there are three main classes with which to familiarize oneself:
 
 ### Game:
 
-This class defines a 'Game' object, meaning it provides the basic programming of a game. This is based on a loop with the stages of: a logic update; clearing of the canvas element; rendering of the game graphics on the canvas element. Moreover, it holds 'Level' objects, and many functions allowing the coding of game logic, and populating its 'Level' objects (REFERENCE to api doc).
+This class defines a 'Game' object -- it provides the basic code of a game. This is based on a loop with the stages of: a logic update; clearing of the canvas element; rendering of the game graphics on the canvas element. Moreover, it holds 'Level' objects, and many functions allowing the coding of game logic, and populating its 'Level' objects (REFERENCE to api doc).
 
 ### Level:
 
-This class defines a 'Level' object, meaning it is a datatype that holds entities to populate it:
+This class defines a 'Level' object -- it is a datatype that holds entities to populate it:
 
 * AnimateEntity
 * TextEntity
 * Background
 
 **Note:** The 'Background' class creates an object that displays an image in the background of the level; it is the first entity to be rendered on the canvas, and does not interact with anything else. 
+
+### Entities:
+
+Entities are objects that populate an instance of the 'Level' class. They come in different types:
+
+* AnimateEntity
+* TextEntity
+* Background
+
+Each entity class serves a purpose.
+
+#### AnimateEntity
+
+These are entites that are "loose" and interact to physical forces in the game, i.e. they get pulled by gravity -- if it is present -- and pushed around by collisions with other interactive entities.
+
+### TextEntity
+
+These are entities that represent text 
