@@ -1,13 +1,22 @@
 
 define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
-   var Level = function (properties) {
+   var Level = function (options) {
+   	   
+   	   if (typeof options.id == 'undefined') {
+	   	   console.log('id needs to be defined in level options');
+	   	   return; 
+	   }
 
-   	   this.previousLevel = ( properties.previousLevel || undefined );
-   	   this.nextLevel = ( properties.nextLevel || undefined );
+	   // SET ID
+	   this.id = options.id;
+
+	   // SET NEXT AND PREVIOUS
+   	   this.previousLevel = ( options.previousLevel || undefined );
+   	   this.nextLevel = ( options.nextLevel || undefined );
 
 	   // SETUP WORLD
-       var gravityH = (properties && properties.gravityH) ? properties.gravityH : 0;
-       var gravityV = (properties && properties.gravityV) ? properties.gravityV : 0;
+       var gravityH = (options && options.gravityH) ? options.gravityH : 0;
+       var gravityV = (options && options.gravityV) ? options.gravityV : 0;
        var SCALE = 40,
            gravity = new box2d.b2Vec2( gravityH, gravityV);
        this.world = new box2d.b2World(gravity, true);
