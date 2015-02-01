@@ -93,7 +93,7 @@ define(['jquery', 'game'], function ($, Game) {
                                       sx:0,
                                       sy:0,
                                       angle:angle,
-                                      world:world
+                              		  level: level
                               });
                               bullet.addTexture('default','images/bullet.png');
                               bullet.setCurrentTexture('default');
@@ -241,7 +241,7 @@ define(['jquery', 'game'], function ($, Game) {
                                               width: 75,
                                               height: 75,
                                               angle: Math.random() * Math.PI,
-                                              world: world
+                                      		  level: level
                                       });
                                       level.addEntity(asteroid);
 

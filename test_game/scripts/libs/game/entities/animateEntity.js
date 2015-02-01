@@ -20,6 +20,7 @@ define([
        this.y = ( properties.y || 0);
        this.width = ( properties.width || 0);
        this.height = ( properties.height || 0);
+       this.level = properties.level; // non-optional variable
 
        /* Animation Stuff */
        this.time = new Date().getTime();
@@ -48,7 +49,7 @@ define([
        bodyDef.angle = this.angle;
        fixDef.shape = new box2d.b2PolygonShape(); // sets type of shape
        fixDef.shape.SetAsBox((this.width / this.SCALE) / 2, (this.height / this.SCALE) / 2); // sets width & height
-       this.body = properties.world.CreateBody(bodyDef);
+       this.body = this.level.world.CreateBody(bodyDef);
        this.body.SetUserData(this);
        this.body.CreateFixture(fixDef); // adds the defined body to the defined world.
 
