@@ -49,10 +49,23 @@ define([
     * THE SOFTWARE.
     */
 
-   window.Game = function (canvasID) {
+	window.Game = function (options) {
 
-      var canvas = document.getElementById(canvasID);
-      var context = canvas.getContext('2d');
+		if (typeof options.canvasID == 'undefined') {
+		   console.log('canvasID needs to be specified in the options');
+		   return;
+		}
+
+		this.canvasID = options.canvasID;
+		this.canvasWidth = ( options.canvasWidth || 640 );
+		this.canvasHeight = ( options.canvasHeight || 400);
+
+		console.log(this.canvasID);
+		this.canvas = document.getElementById(this.canvasID);
+		this.context = canvas.getContext('2d');
+
+		this.setCanvasWidth(this.canvasWidth);
+		this.setCanvasHeight(this.canvasHeight);
 
       /* LOCAL STORAGE SETUP */
       if(typeof(Storage) !== "undefined"){
@@ -353,21 +366,6 @@ define([
       this.clearCanvas = function(){
           canvas.width = canvas.width;
       };
-      /**
-       * Sets the canvas width.
-       * @param {float} width The width of the canvas.
-       */
-      this.setCanvasWidth = function(width){
-          canvas.width = width;
-      };
-
-      /**
-       * Sets the canvas height.
-       * @param {float} height The height of the canvas.
-       */
-      this.setCanvasHeight = function(height){
-          canvas.height = height;
-      }
 
       /**
        * Gets the width of the canvas.
@@ -517,6 +515,22 @@ define([
        */
       this.box2d = box2d;
    };
+
+      /**
+       * Sets the canvas width.
+       * @param {float} width The width of the canvas.
+       */
+      Game.prototype.setCanvasWidth = function(width){
+          this.canvas.width = width;
+      };
+
+      /**
+       * Sets the canvas height.
+       * @param {float} height The height of the canvas.
+       */
+      Game.prototype.setCanvasHeight = function(height){
+          this.canvas.height = height;
+      };
 
    return Game;
 });
