@@ -2,23 +2,23 @@
 define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
    var Level = function (properties) {
 
+	   // SETUP WORLD
        var gravityH = (properties && properties.gravityH) ? properties.gravityH : 0;
        var gravityV = (properties && properties.gravityV) ? properties.gravityV : 0;
-       
        var SCALE = 40,
            gravity = new box2d.b2Vec2( gravityH, gravityV);
        this.world = new box2d.b2World(gravity, true);
        
-       // create background
+       // SET BACKGROUND
        this.background = null;
        
-       // create entities
+       // SET ENTITIES
        this.entities = [];
 
-       // create decorations
+       // SET DECORATIONS
        this.decorations = [];
        
-       // logic functions bound to this level
+       // LOGIC FUNCTIONS
        this.logic = [];
 
        /*
@@ -30,6 +30,11 @@ define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
        debugDraw.SetFlags(box2d.b2DebugDraw.e_shapeBit | box2d.b2DebugDraw.e_jointBit);
        this.world.SetDebugDraw(debugDraw);
        /**/
+
+       /**
+       	* Renders entities on canvas.
+       	* @return {undefined}
+       	*/
        this.draw = function(context){
            if(this.background){
                this.background.draw(context);
@@ -40,13 +45,21 @@ define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
            }
        };
 
+	   /**
+	   	* Returns entity under key of "entityString"
+	   	*
+	   	* @param {String} entityString String representing key of entity.
+	   	* @return {undefined}
+	   	*/
        this.getEntity = function(entityString){
            return this.entities[entityString];
        };
 
-       /**Adds entities to the game level
-        * 'entity' is an object.
-        * 'type' is a string indicating whether or not an 'entity' is interactive or decoration.
+       /**
+       	* Adds entities to the game level
+        *
+        * @param {Entity} entity An object of entity type.
+        * @return {undefined}
         */
        this.addEntity = function(entity){
            this.entities[entity.id] = entity;
@@ -58,6 +71,7 @@ define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
         * Will be executed after logic of game.
         * 
         * @param {function} func A JavaScript function of choice.
+        * @return {undefined}
         */
        this.addLogic = function(func){
            this.logic.push(func);
@@ -66,6 +80,7 @@ define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
        /**
         * Sets the background of the level.
         * @param {object Background} background A Background object
+        * @return {undefined}
         */
        this.setBackground = function(background){
            this.background = background;
@@ -76,6 +91,7 @@ define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
         *  - look at world variable at the top.
         * @param {float} h The magnitude of horizontal gravity.
         * @param {float} v The magnitude of vertical gravity.
+        * @return {undefined}
         */
        this.setGravity = function(h,v){
            this.world.gravity = new box2d.b2Vec2(h,v);

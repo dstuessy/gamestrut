@@ -13,10 +13,9 @@ define(['jquery', 'game'], function ($, Game) {
       	  var canvasHeight = 600;
       	  
       	  var game = new Game({
-      	  	  canvasID: 'canvas',
-      	  	  canvasWidth: canvasWidth,
-      	  	  canvasHeight: canvasHeight
+      	  	  canvasID: 'canvas'
 		  });
+
       });
    };
 

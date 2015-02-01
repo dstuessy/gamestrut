@@ -51,28 +51,24 @@ define([
 
 	window.Game = function (options) {
 
+		// CHECK canvasID
 		if (typeof options.canvasID == 'undefined') {
 		   console.log('canvasID needs to be specified in the options');
 		   return;
 		}
 
+		// SET OPTIONS
 		this.canvasID = options.canvasID;
 		this.canvasWidth = ( options.canvasWidth || 640 );
 		this.canvasHeight = ( options.canvasHeight || 400);
 
-		console.log(this.canvasID);
+		// SET CANVAS
 		this.canvas = document.getElementById(this.canvasID);
 		this.context = canvas.getContext('2d');
-
+		// SET CANVAS DIMENSIONS
 		this.setCanvasWidth(this.canvasWidth);
 		this.setCanvasHeight(this.canvasHeight);
 
-      /* LOCAL STORAGE SETUP */
-      if(typeof(Storage) !== "undefined"){
-          if(isNaN(localStorage.highscore)){
-              localStorage.highscore = 0;
-          }
-      }
       /* STATE LOADER */
           // Implement Linked List for this
           var levels = [];
@@ -204,7 +200,6 @@ define([
           if(level){
               input();
               logic();
-              //console.log(level);
           }
       }
 
@@ -240,7 +235,6 @@ define([
               function physicsLogic(){
                   $('#about').html('running');
                   if(level){
-                      //console.log(level);
                       level.world.Step(timeStep, 8,3);
                       level.world.ClearForces();
                   }
@@ -440,7 +434,6 @@ define([
        */
       this.addLevel = function(lvl,lvlID){
           levels[lvlID] = lvl;
-          //console.log(levels);
       };
       /**Retrieves the current level
        */
