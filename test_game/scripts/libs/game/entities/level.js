@@ -2,6 +2,9 @@
 define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
    var Level = function (properties) {
 
+   	   this.previousLevel = ( properties.previousLevel || undefined );
+   	   this.nextLevel = ( properties.nextLevel || undefined );
+
 	   // SETUP WORLD
        var gravityH = (properties && properties.gravityH) ? properties.gravityH : 0;
        var gravityV = (properties && properties.gravityV) ? properties.gravityV : 0;
