@@ -61,7 +61,6 @@ define([
        this.addTexture = function(textureID,textureURL){entityMethods.addTexture(this,textureID,textureURL);};
        this.setCurrentTexture = function(textureID){entityMethods.setCurrentTexture(this,textureID);};
        this.addFunction = function(funcName,func){
-           //this.push(func(this));
            this[funcName] = function(){func(this);};
        };
 

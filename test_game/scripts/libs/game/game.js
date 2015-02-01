@@ -12,7 +12,7 @@ define([
 'libs/game/entities/animateEntity'
 ], function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, entityMethods, AnimateEntity) {
 
-   /** 
+   /*! 
     * GAME DEV API, Version 1.0!
     * @author Daniel Stuessy
     * @description An html5 canvas video game framework.
@@ -475,71 +475,47 @@ define([
       };
       
       /**
-       * Creates and returns a new Level Object.
-       * 
-       * @param {Object} properties A JSON object that holds properties for the new Level object.
-       * @return {Level} A new Level Object.
+       * A Level class;
+       * @type {Level}
        */
-      this.newLevel = function (properties) {
-          return new Level(properties);
-      };
+      this.Level = Level;
 
       /**
-       * Creates and returns a new Background Object.
-       * 
-       * @param {Object} properties A JSON object that holds properties for the new Background object.
-       * @return {Backgroud} A new Background Object.
+       * A Background class.
+       * @type {Background}
        */
-      this.newBackground = function (imageString) {
-          return new Background(imageString);
-      };
+      this.Background = Background;
 
       /**
-       * Creates and returns a new TextEntity Object.
-       * 
-       * @param {Object} properties A JSON object that holds properties for the new TextEntity object.
-       * @return {TextEntity} A new TextEntity Object.
+       * A TextEntity class.
+       * @type {TextEntity}
        */
-      this.newTextEntity = function (text, properties) {
-          return new TextEntity(text, properties);
-      };
+      this.TextEntity = TextEntity;
 
       /**
-       * Creates and returns the entityMethods hash table.
-       * 
-       * @return {entityMethods} A entityMethods entityMethods hash table.
+       * Mixin of functions for all AnimateEntities.
+       * @type {Object}
        */
-      this.entityMethods = function () {
-          return entityMethods;
-      };
+      this.entityMethods = entityMethods;
 
       /**
-       * Creates and returns a new AnimateEntity Object.
-       * 
-       * @param {Object} properties A JSON object that holds properties for the new AnimateEntity object.
-       * @return {AnimateEntity} A new AnimateEntity Object.
+       * An AnimateEntity class.
+       * @type {AnimateEntity}
        */
-      this.newAnimateEntity = function (properties) {
-          return new AnimateEntity(properties);
-      };
+      this.AnimateEntity = AnimateEntity;
 
       /**
-       * Creates and returns key Object.
-       * 
-       * @return {key} The key Object.
+       * Holds and manages all the key codes pressed.
+       * @type {Object}
        */
-      this.key = function () {
-          return key;
-      };
+      this.key = key;
 
       /**
-       * Returns box2d object.
-       *
-       * @return {box2d} The box2d object.
+       * box2d variable
+       * Holds all the classes used from box2d
+       * @type {Box2d}
        */
-      this.box2d = function () {
-         return box2d;
-      };
+      this.box2d = box2d;
    };
 
    return Game;

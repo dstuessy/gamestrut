@@ -14,30 +14,30 @@ define(['jquery', 'game'], function ($, Game) {
                   game.setCanvasWidth(canvasWidth);
                   game.setCanvasHeight(canvasHeight);
                   
-              var box2d = game.box2d();
-              var key = game.key();
+              var box2d = game.box2d;
+              var key = game.key;
 
 
 
-              var level = game.newLevel({
+              var level = new game.Level({
                               gravityH:0, //optional
                               gravityV:0 // optional
                       });	
                   world = level.world;
 
               // Add Background
-              var background = game.newBackground('images/background.png');
+              var background = new game.Background('images/background.png');
               level.setBackground(background);
 
               // DECLARE ENTITIES
-              var title = game.newTextEntity('Asteroids', {
+              var title = new game.TextEntity('Asteroids', {
                       id:'title',
                       x:(canvasWidth/2)-(55),
                       y:25,
                       fontFamily:'Orbitron',
                       fontColor:'#00ff00'
               });
-              var player = game.newAnimateEntity({
+              var player = new game.AnimateEntity({
                               id:'Player',
                               x:(canvasWidth/2)-20,
                               y:(canvasHeight/2)-20,
@@ -46,7 +46,7 @@ define(['jquery', 'game'], function ($, Game) {
                               sx:0,
                               sy:0,
                               angle:0,
-                              world:world
+                      		  level: level
                       });
               player.addTexture('default','images/player.png');
               player.setCurrentTexture('default');
@@ -84,7 +84,7 @@ define(['jquery', 'game'], function ($, Game) {
 
 
 
-                              var bullet = game.newAnimateEntity({
+                              var bullet = new game.AnimateEntity({
                                       id:'Bullet '+bulletNo,
                                       x:x2,
                                       y:y2,
@@ -234,7 +234,7 @@ define(['jquery', 'game'], function ($, Game) {
                                       var x = (randomX == 1) ? xSpace : canvasWidth - xSpace - 75;
                                       var y = (randomY == 1) ? ySpace : canvasHeight - ySpace - 75;
 
-                                      var asteroid = game.newAnimateEntity({
+                                      var asteroid = new game.AnimateEntity({
                                               id: 'Asteroid '+i,
                                               x: x,
                                               y: y,
