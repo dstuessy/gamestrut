@@ -2,7 +2,7 @@
 /** 
  * mousetrap v1.3 craig.is/killing/mice 
  */
-var box2dweb, libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_controller, libs_game_entities_level, libs_game_entities_background, libs_game_entities_textEntity, libs_game_functionalStuff_collision, libs_game_entities_entityMethods, libs_game_entities_animateEntity, libs_game_entities_block, game, libs_game_gamestrutjs;
+var box2dweb, libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_controller, libs_game_entities_level, libs_game_functionalStuff_collision, libs_game_entities_entityMethods, libs_game_entities_background, libs_game_entities_textEntity, libs_game_entities_animateEntity, libs_game_entities_block, game, libs_game_gamestrutjs;
 (function () {
   function s(a, c, b) {
     a.addEventListener ? a.addEventListener(c, b, !1) : a.attachEvent('on' + c, b);
@@ -9586,45 +9586,6 @@ libs_game_entities_level = function (box2d) {
   };
   return Level;
 }(libs_game_functionalStuff_box2dvariables);
-libs_game_entities_background = function () {
-  var Background = function (imageString) {
-    //this.context = document.getElementById('canvas').getContext('2d');
-    this.texture = new Image();
-    this.texture.src = imageString;
-    this.x = 0;
-    this.y = 0;
-    this.width = this.texture.width;
-    this.height = this.texture.height;
-    this.draw = function (context) {
-      context.drawImage(this.texture, this.x, this.y);
-    };
-    this.getX = function () {
-      return this.getX();
-    };
-    this.setX = function (tempX) {
-      this.x = tempX;
-    };
-  };
-  return Background;
-}();
-libs_game_entities_textEntity = function () {
-  var TextEntity = function (text, properties) {
-    this.id = properties.id;
-    this.type = 'Text';
-    this.text = text;
-    this.x = properties.x || 0;
-    this.y = properties.y || 0;
-    this.fontSize = properties.fontSize || 20;
-    this.fontColor = properties.fontColor || 'black';
-    this.fontFamily = properties.fontFamily || 'Arial';
-  };
-  TextEntity.prototype.draw = function (ctx) {
-    ctx.font = this.fontSize + 'px ' + this.fontFamily;
-    ctx.fillStyle = this.fontColor;
-    ctx.fillText(this.text, this.x, this.y);
-  };
-  return TextEntity;
-}();
 libs_game_functionalStuff_collision = function () {
   var Collision = function (event, objAId, objBId, execute) {
     this.event = event;
@@ -9803,10 +9764,18 @@ libs_game_entities_entityMethods = function (box2d, key, Collision, Controller) 
         this.previousTexture = this.texture;
       }
     },
+    /**
+     * Set level of an entity.
+     * Initialize physics of entity if it has the function.
+     *
+     * @return {undefined}
+     */
     setLevel: function (level) {
       // ADD LEVEL IF IT'S DEFINED AND OF TYPE 'level'
       if (typeof level != 'undefined' && level.type == 'Level') {
         this.level = level;
+        if (typeof this.initPhysics == 'undefined')
+          return;
         this.initPhysics();
       } else {
         // ERROR OUTPUT
@@ -9864,7 +9833,7 @@ libs_game_entities_entityMethods = function (box2d, key, Collision, Controller) 
      */
     draw: function (context) {
       // DRAW FOR ANIMATE ENTITY
-      if (this.type = 'AnimateEntity' && !this.dead) {
+      if (this.type == 'AnimateEntity' && !this.dead) {
         if (this.lookingRight) {
           //this.drawShield(context);
           this.drawBody(context);  //this.drawSword(context);
@@ -9875,11 +9844,44 @@ libs_game_entities_entityMethods = function (box2d, key, Collision, Controller) 
         }
       }
       // DRAW FOR BLOCK
-      if (this.type = 'Block') {
+      if (this.type == 'Block') {
+        this.drawBody(context);
+      }
+      // DRAW FOR BACKGROUND
+      if (this.type == 'Background') {
+        this.drawBody(context);
+      }
+      // DRAW FOR TEXT
+      if (this.type == 'Text') {
         this.drawBody(context);
       }
     },
     drawBody: function (context) {
+      // DRAW TEXT IF TEXT ENTITY
+      if (this.type == 'Text') {
+        // DRAW TEXT
+        context.font = this.fontSize + 'px ' + this.fontFamily;
+        context.fillStyle = this.fontColor;
+        context.fillText(this.text, this.x, this.y);
+        return;
+      }
+      // DRAW BACKGORUND IF BACKGROUND ENTITY
+      if (this.type == 'Background') {
+        // DRAW BACKGROUND
+        if (typeof this.texture != 'undefined') {
+          var image = new Image();
+          image.src = this.texture;
+          // DRAW TEXTURE
+          context.drawImage(image, this.x, this.y);
+        } else {
+          // DRAW COLOR
+          context.fillStyle = this.color;
+          context.fillStyle = 'yellow';
+          context.fillRect(this.x, this.y, context.canvas.width, context.canvas.height);
+        }
+        return;
+      }
+      // CONTINUE FOR DRAWING ANIMATE ENTITY OR BLOCK ENTITY
       this.x = this.body.GetPosition().x * this.SCALE - this.width / 2;
       this.y = this.body.GetPosition().y * this.SCALE - this.height / 2;
       this.angle = this.body.GetAngle();
@@ -9939,6 +9941,67 @@ libs_game_entities_entityMethods = function (box2d, key, Collision, Controller) 
   };
   return entityMethods;
 }(libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_collision, libs_game_functionalStuff_controller);
+libs_game_entities_background = function (entityMethods) {
+  var Background = function (options) {
+    // ADD ALL OPTIONS
+    for (var key in options) {
+      this[key] = options[key];
+      // BIND FUNCTIONS TO this OBJECT
+      if (typeof this[key] == 'function') {
+        this[key] = this[key].bind(this);
+      }
+    }
+    // SET DEFAULT OPTIONS
+    this.type = 'Background';
+    this.texture = options.texture;
+    this.color = options.color || 'black';
+    this.x = options.x || 0;
+    this.y = options.y || 0;
+    this.width = typeof this.texture != 'undefined' ? this.texture.width : 0;
+    this.height = typeof this.texture != 'undefined' ? this.texture.height : 0;
+    // ADD ALL entityMethods FUNCTIONS
+    for (var key in entityMethods) {
+      var func = entityMethods[key];
+      this[key] = func.bind(this);
+    }
+    // INITIALIZE STUFF
+    // COLLISIONS
+    this.initCollisions();
+    // CONTROLLERS
+    this.initControllers();
+  };
+  return Background;
+}(libs_game_entities_entityMethods);
+libs_game_entities_textEntity = function (entityMethods) {
+  var TextEntity = function (options) {
+    // ADD ALL OPTIONS
+    for (var key in options) {
+      this[key] = options[key];
+      // BIND FUNCTIONS TO this OBJECT
+      if (typeof this[key] == 'function') {
+        this[key] = this[key].bind(this);
+      }
+    }
+    // SETTING DEFAULT OPTIONS
+    this.type = 'Text';
+    this.x = this.x || 0;
+    this.y = this.y || 0;
+    this.fontSize = this.fontSize || 20;
+    this.fontColor = this.fontColor || 'black';
+    this.fontFamily = this.fontFamily || 'Arial';
+    // ADD ALL entityMethods FUNCTIONS
+    for (var key in entityMethods) {
+      var func = entityMethods[key];
+      this[key] = func.bind(this);
+    }
+    // INITIALIZE STUFF
+    // COLLISIONS
+    this.initCollisions();
+    // CONTROLLERS
+    this.initControllers();
+  };
+  return TextEntity;
+}(libs_game_entities_entityMethods);
 libs_game_entities_animateEntity = function (Mousetrap, Key, Controller, Collision, box2d, entityMethods, Level) {
   /**
   	* Animate Entity Object 
