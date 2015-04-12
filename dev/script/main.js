@@ -219,6 +219,20 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						height: 25,
 						color: 'white',
 						zindex: '2'
+					}),
+					new GameStrut.TextEntity({
+						id: 'title',
+						text: 'Title!',
+						x: canvasWidth/2,
+						y: 50,
+						fontFamily: 'Helvetica',
+						fontColor: '#00ff00',
+						zindex: '3'
+					}),
+					new GameStrut.Background({
+						id: 'background',
+						//texture: 'images/background.png',
+						zindex: '0'
 					})
 				]
 			});

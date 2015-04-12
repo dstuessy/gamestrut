@@ -1,22 +1,44 @@
 
-define([], function () {
+define([
+   'libs/game/entities/entityMethods'
+], function ( entityMethods ) {
 
-      var TextEntity = function (text,properties){
-              this.id = properties.id;
-          this.type = 'Text';
-              this.text = text;
-              this.x = ( properties.x || 0 );
-              this.y = ( properties.y || 0 );
-              this.fontSize = ( properties.fontSize || 20 );
-              this.fontColor = ( properties.fontColor || 'black' );
-              this.fontFamily = ( properties.fontFamily || 'Arial' );
-      }
-      
-      TextEntity.prototype.draw = function(ctx){
-              ctx.font = this.fontSize + 'px ' + this.fontFamily;
-              ctx.fillStyle = this.fontColor;
-              ctx.fillText(this.text,this.x,this.y);
-      };
-     
-      return TextEntity;
+	var TextEntity = function ( options ) {
+		
+		// ADD ALL OPTIONS
+		for (var key in options) {
+			
+			this[key] = options[key];
+			
+			// BIND FUNCTIONS TO this OBJECT
+			if (typeof this[key] == 'function') {
+
+				this[key] = this[key].bind(this);
+			}
+		}
+
+		// SETTING DEFAULT OPTIONS
+		this.type = 'Text';
+		this.x = this.x || 0;
+		this.y = this.y || 0;
+		this.fontSize = this.fontSize || 20;
+		this.fontColor = this.fontColor || 'black';
+		this.fontFamily = this.fontFamily || 'Arial';
+
+		// ADD ALL entityMethods FUNCTIONS
+		for (var key in entityMethods) {
+			
+			var func = entityMethods[key];
+
+			this[key] = func.bind(this);
+		}
+
+		// INITIALIZE STUFF
+		// COLLISIONS
+		this.initCollisions();
+		// CONTROLLERS
+		this.initControllers();
+	};
+
+	return TextEntity;
 });

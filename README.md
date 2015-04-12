@@ -24,7 +24,7 @@ On top of that, a physics engine comes included; the one of choice is "boxweb2d"
 
 As for keybinding, the standard JavaScript api for browser keybinds are too jittery and limiting for a decent gaming experience. Instead, the use of a library "Mousetrap.js" is used for 'konami code' features and fluid key response.
 
-I hope this can help as a suitable jump start on game projects. Although the core aspects have already been developed, there is still a lot of polish to be done for a suitable development release. 
+I hope this can help as a suitable jump start on game projects.
 
 Happy game developing! 
 
@@ -41,25 +41,32 @@ To get started, there are three main classes with which to familiarize oneself:
 
 This class defines a 'Game' object -- it provides the basic code of a game. This is based on a loop with the stages of: a logic update; clearing of the canvas element; rendering of the game graphics on the canvas element. Moreover, it holds 'Level' objects, and many functions allowing the coding of game logic, and populating its 'Level' objects (REFERENCE to api doc).
 
-~~~~ javascript
-var game = new Game('my-canvas-element-id');
+**Note**: A 'GameStrut.Game' object starts running the game loop on initialization.
 
-game.setCanvasWidth(800);
-game.setCanvasHeight(600);
+~~~~ javascript
+var game = new GameStrut.Game({
+	canvasID: 'canvas',
+	canvasWidth: 800,
+	canvasHeight: 600,
+	levels: [level],
+	current_level: level,
+	disableRightClick: true 
+});
 ~~~~
 
 ### Level (REFERENCE to api docs):
 
-This class defines a 'Level' object -- it is a datatype that holds entities to populate it:
+This class defines a 'Level' object. It is a datatype that holds entities to populate it:
 
 * AnimateEntity (REFERENCE to readme section)
 * TextEntity (REFERENCE to readme section)
 * Background (REFERENCE to readme section)
 
 ~~~~ javascript
-var level = game.newLevel({
-	gravityH: 0, // optional
-	gravityV: 58 // optional
+var level = new GameStrut.Level({
+	id: "level_test",
+	gravityV: 80,
+	entities: [player, npc1, npc2, ground, wall]
 });
 ~~~~
 
@@ -75,32 +82,144 @@ Each entity class serves a purpose.
 
 #### AnimateEntity (REFERENCE to api docs)
 
-These are entites that are "loose" and interact with physical forces in the game, i.e. they get pulled by gravity -- if it is present -- and pushed around by collisions with other interactive entities.
+These are entities that are "loose" and interact with physical forces in the game, i.e. they get pulled by gravity -- if it is present -- and pushed around by collisions with other 'animate entities'.
 
 ~~~~ javascript 
-var player = game.newAnimateEntity({
-	id: 'Player',
-	x: 100,
-	y: 100,
+new GameStrut.AnimateEntity({
+	id: 'animate_entity_test',
+	x: 50,
+	y: 50,
 	width: 40,
-	height: 40,
-	sx: 0,
-	sy: 0,
-	angle: 0, 
-	world: level.world
-});
+	height: 80,
+	zindex: '1',
+	friction: 1,
+	density: 1,
+	moveVelocity: 12,
+	jumpPower: 25,
+	// MOVES PLAYER TO THE RIGHT
+	moveRight: function () {
+
+		console.log('moveRight!');
+
+		this.setLinearVelocity({x: this.moveVelocity});
+		this.setAngularVelocity(0.2);
+
+		if (this.getAngle() > 0.2) {
+			this.setAngle(0.2);
+		}
+	},
+	// MOVES PLAYER TO THE LEFT
+	moveLeft: function () {
+
+		console.log('moveLeft!');
+
+		this.setLinearVelocity({x: -1*( this.moveVelocity )});
+		this.setAngularVelocity(-0.2);
+
+		if (this.getAngle() < -0.2) {
+			this.setAngle(-0.2);
+		}
+	},
+	// ADJUSTS PLAYER TO A STANDING POSITION
+	standing: function () {
+
+		console.log('standing');
+
+		this.setAngle(0);
+		this.setLinearVelocity(0);
+		this.setAngularVelocity(0);
+	},
+	// JUMPS PLAYER
+	jump: function () {
+
+		console.log('jump!');
+
+		// DEFINE jumpCount
+		this.jumpCount = this.jumpCount || 1;
+		// SET jumpPower RELATIVE TO NUMBER OF JUMPS
+		var jumpPower = this.jumpPower;
+
+		// ONLY JUMP IF JUMPING IS DONE
+		if (
+			typeof this.jumped == 'undefined' 
+			&& 
+			this.jumpCount < 3
+		) {
+
+			// APPLY IMPULSE
+			this.setLinearVelocity({
+				y: -1*( jumpPower )
+			});
+			// SET JUMPED TO TRUE
+			this.jumped = true;
+			// INCREASE JUMP COUNT
+			this.jumpCount++;
+		}
+	},
+	jumpRelease: function () {
+		// DEFINED IN jump FOR THE FIRST TIME
+		// used to controll jumps per space press
+		this.jumped = undefined;
+	},
+	jumpReset: function () {
+		this.jumpCount = undefined;
+	},
+	controllers: {
+		'jump': {
+			event: 'keydown',
+			key: 'space',
+			preventDefault: true,
+			execute: 'jump'
+		},
+		'jumpRelease': {
+			event: 'keyup',
+			key: 'space',
+			preventDefault: true,
+			execute: 'jumpRelease'
+		},
+		'standing': {
+			event: 'keyup',
+			key: 'a+d',
+			execute: 'standing'
+		},
+		'right': {
+			event: 'keydown',
+			key: 'd', 
+			execute: 'moveRight'
+		},
+		'left': {
+			event: 'keydown',
+			key: 'a',
+			execute: 'moveLeft'
+		}
+	},
+	collisions: {
+		'BeginContact': {
+			'block_test': 'jumpReset',
+			'block_test_2': 'jumpReset',
+			'block_ceiling': 'jumpReset',
+			'block_left_wall': 'jumpReset',
+			'block_right_wall': 'jumpReset',
+			'animate_entity_test_2': 'jumpReset',
+			'animate_entity_test_3': 'jumpReset',
+			'block_floor': 'jumpReset'
+		}
+	}
+}),
 ~~~~
 #### TextEntity (REFERENCE to api docs)
 
 These are entities that represent text. They do not interact with any object, but serve for things like titles. 
 
 ~~~~ javascript
-var title = game.newTextEntity('This is a title!', {
+var title = new GameStrut.TextEntity({
 	id: 'title',
-	x: 250,
+	text: 'Title!',
+	x: canvasWidth/2,
 	y: 50,
 	fontFamily: 'Helvetica',
-	fontColor: '#00ff00'
+	fontColor: '#00ff00',
+	zindex: '3'
 });
 ~~~~
 
@@ -111,7 +230,9 @@ The 'Background' class creates an object that displays an image in the backgroun
 If a 'Background' object renders an image, it will maintain its "zoom" and aspect ratio, even if it renders out of the canvas edges. It also stays at a fixed position relative to its parent's -- a 'Level' (REFERENCE to api docs) object -- x and y coordinates.
 
 ~~~~ javascript
-var background = game.newBackground('images/background.png');
-
-level.setBackground(background);
+var background = new GameStrut.Background({
+	id: 'background',
+	//texture: 'images/background.png',
+	zindex: '0'
+})
 ~~~~

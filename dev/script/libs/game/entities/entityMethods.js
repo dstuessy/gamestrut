@@ -182,14 +182,24 @@ define([
 			}
 		},
 
+		/**
+		 * Set level of an entity.
+		 * Initialize physics of entity if it has the function.
+		 *
+		 * @return {undefined}
+		 */
 		setLevel: function (level) {
 
 			// ADD LEVEL IF IT'S DEFINED AND OF TYPE 'level'
 			if (typeof level != 'undefined' && level.type == 'Level') {
+
 				this.level = level;
+
+				if ( typeof this.initPhysics == 'undefined' ) return;
 				this.initPhysics();
 			}
 			else {
+
 				// ERROR OUTPUT
 				console.log(level);
 				console.log('could not set above ' + level + ' as level.');
@@ -197,7 +207,7 @@ define([
 		},
 
 		initControllers: function () {
-			
+
 			// SET UP CONTROLLERS
 			for (var controllerIndex in this.controllers) {
 
@@ -215,7 +225,7 @@ define([
 				execute = (
 					typeof execute == 'string' 
 					&& 
-					typeof this[execute] != 'undefined'
+						typeof this[execute] != 'undefined'
 				) ? this[execute] : execute.bind(this);
 
 				// CREATE CONTROLLER
@@ -264,7 +274,7 @@ define([
 		draw: function (context) {
 
 			// DRAW FOR ANIMATE ENTITY
-			if (this.type = 'AnimateEntity' && !this.dead) {
+			if (this.type == 'AnimateEntity' && !this.dead) {
 
 				if (this.lookingRight) {
 
@@ -282,12 +292,70 @@ define([
 			}
 
 			// DRAW FOR BLOCK
-			if (this.type = 'Block') {
-				this.drawBody(context);
+			if (this.type == 'Block') {
+				this.drawBody( context );
+			}
+
+			// DRAW FOR BACKGROUND
+			if ( this.type == 'Background' ) {
+				this.drawBody( context );
+			}
+
+			// DRAW FOR TEXT
+			if (this.type == 'Text') {
+				this.drawBody( context );
 			}
 		},
 
 		drawBody: function (context) {
+
+			// DRAW TEXT IF TEXT ENTITY
+
+			if (this.type == 'Text') {
+
+				// DRAW TEXT
+				context.font = this.fontSize + 'px ' + this.fontFamily;
+				context.fillStyle = this.fontColor;
+				context.fillText( this.text, this.x, this.y );
+
+				return;
+			}
+
+			// DRAW BACKGORUND IF BACKGROUND ENTITY
+
+			if (this.type == 'Background') {
+
+				// DRAW BACKGROUND
+				if (typeof this.texture != 'undefined') {
+
+					var image = new Image();
+					image.src = this.texture;
+
+					// DRAW TEXTURE
+					context.drawImage( 
+									  image, 
+									  this.x, 
+									  this.y 
+									 );
+				} 
+				else {
+
+					// DRAW COLOR
+					context.fillStyle = this.color;
+					context.fillStyle = 'yellow';
+					context.fillRect(
+						this.x, 
+						this.y,
+						context.canvas.width,
+						context.canvas.height
+					);
+				}
+
+				return;
+			}
+
+
+			// CONTINUE FOR DRAWING ANIMATE ENTITY OR BLOCK ENTITY
 
 			this.x = (this.body.GetPosition().x * this.SCALE) - this.width/2;
 			this.y = (this.body.GetPosition().y * this.SCALE) - this.height/2;

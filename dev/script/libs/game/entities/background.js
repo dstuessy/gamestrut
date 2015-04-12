@@ -1,27 +1,45 @@
 
-define([], function () {
-   var Background = function (imageString) {
-        
-        //this.context = document.getElementById('canvas').getContext('2d');
-        this.texture = new Image();
-        this.texture.src = imageString;
-        this.x = 0;
-        this.y = 0;
-        this.width = this.texture.width;
-        this.height = this.texture.height;
-        
-        this.draw = function(context){
-                context.drawImage(this.texture,this.x,this.y);
-        };
-        
-        this.getX = function(){
-                return this.getX();
-        };
-        
-        this.setX = function(tempX){
-                this.x = tempX;
-        };
-   };
+define([
+	'libs/game/entities/entityMethods'
+], function ( entityMethods ) {
 
-   return Background;
+	var Background = function ( options ) {
+
+		// ADD ALL OPTIONS
+		for (var key in options) {
+			
+			this[key] = options[key];
+			
+			// BIND FUNCTIONS TO this OBJECT
+			if (typeof this[key] == 'function') {
+
+				this[key] = this[key].bind(this);
+			}
+		}
+
+		// SET DEFAULT OPTIONS
+		this.type = 'Background';
+		this.texture = options.texture;
+		this.color = options.color || 'black';
+		this.x = options.x || 0;
+		this.y = options.y || 0;
+		this.width = ( typeof this.texture != 'undefined' ) ? this.texture.width : 0;
+		this.height = ( typeof this.texture != 'undefined' ) ? this.texture.height : 0;
+
+		// ADD ALL entityMethods FUNCTIONS
+		for (var key in entityMethods) {
+			
+			var func = entityMethods[key];
+
+			this[key] = func.bind(this);
+		}
+
+		// INITIALIZE STUFF
+		// COLLISIONS
+		this.initCollisions();
+		// CONTROLLERS
+		this.initControllers();
+	};
+
+	return Background;
 });
