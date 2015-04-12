@@ -3,7 +3,7 @@ gamestrut.js
 
 ### Todo list:
 
-* Redesign objects similar to Backbone.js -- better structure and more simple.
+* &#10004; Redesign objects similar to Backbone.js -- better structure and more simple.
 * Instead of "world" option for AnimateEntity, make it "level".
 * Level scrolling i.e. scroll level horizontally/vertically when character is at edge of canvas
 * "z-indexed" background entities.
