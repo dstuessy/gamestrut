@@ -3,10 +3,8 @@ gamestrut.js
 
 ### Todo list:
 
-* &#10004; Redesign objects similar to Backbone.js -- better structure and more simple.
-* Instead of "world" option for AnimateEntity, make it "level".
 * Level scrolling i.e. scroll level horizontally/vertically when character is at edge of canvas
-* "z-indexed" background entities.
+* &#10004; "z-indexed" entities.
 * Make background zoomable.
 * Nested entities e.g. TextEntity within an Animate Entity -- useful for menus.
 * Have game.mouselisteners that retrieve target game entities under mouse events -- like jquery's event object.
