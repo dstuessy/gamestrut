@@ -85,8 +85,8 @@ Each entity class serves a purpose.
 These are entities that are "loose" and interact with physical forces in the game, i.e. they get pulled by gravity -- if it is present -- and pushed around by collisions with other 'animate entities'.
 
 ~~~~ javascript 
-new GameStrut.AnimateEntity({
-	id: 'animate_entity_test',
+var player = new GameStrut.AnimateEntity({
+	id: 'player',
 	x: 50,
 	y: 50,
 	width: 40,
@@ -205,7 +205,7 @@ new GameStrut.AnimateEntity({
 			'block_floor': 'jumpReset'
 		}
 	}
-}),
+});
 ~~~~
 #### TextEntity (REFERENCE to api docs)
 
