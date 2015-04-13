@@ -234,5 +234,5 @@ var background = new GameStrut.Background({
 	id: 'background',
 	//texture: 'images/background.png',
 	zindex: '0'
-})
+});
 ~~~~
