@@ -14,6 +14,12 @@ gamestrut.js
 * Clean-up redundant/dead code.
 
 ==============
+### Source Files
+
+**Production**: in the 'build/' directory.
+**Development of GameStrut**: under the 'dev/script/libs/gamestrut' directory.
+
+==============
 ### What is gamestrut.js
 
 A template-based JavaScript and HTML5 game framework. Core abstractions are provided for structured game development e.g.: Level classes and Entity Classes. 
