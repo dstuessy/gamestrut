@@ -12,6 +12,7 @@ gamestrut.js
 * Animated background entities.
 * Proper implementation of sprite-based animation.
 * Clean-up redundant/dead code.
+* Fix Entity inheritence from "entityMethods". Turn entityMethods to Entity function. Use call() in all entities to inherit from Entity.
 
 ==============
 ### Source Files
