@@ -2,10 +2,10 @@
 // ..e.g. walls and floors. ////////////////////////////////////////////
 
 define([
-	   'libs/game/functionalStuff/box2dvariables',
-	   'libs/game/entities/entityMethods',
-	   'libs/game/entities/level'
-], function (box2d, entityMethods, Level){
+	'libs/gamestrut/functionalStuff/box2dvariables',
+	'libs/gamestrut/entities/entity',
+	'libs/gamestrut/entities/level'
+], function (box2d, Entity, Level){
 
 	/**
 	 * A block object. Basically an entity
@@ -21,14 +21,16 @@ define([
 	 * AnimateEntity.
 	 *
 	 * @param {object} options A JSON object containing all the options for the Block object.
-*/
+	 */
 	var Block = function (options) {
+
+		Entity.call( this );
 
 		// ADD ALL OPTIONS
 		for (var key in options) {
-			
+
 			this[key] = options[key];
-			
+
 			// BIND FUNCTIONS TO this OBJECT
 			if (typeof this[key] == 'function') {
 
@@ -59,12 +61,16 @@ define([
 		this.SCALE = this.SCALE || 40;
 
 		// ADD entityMethod FUNCTIONS
+		/*
 		for (var key in entityMethods) {
-			
+
 			var func = entityMethods[key];
 
 			this[key] = func.bind(this);
 		}
+		*/
+
+	   console.log( this );
 
 		// INITIALIZE STUFF
 		// COLLISIONS
@@ -75,6 +81,9 @@ define([
 		}
 	};
 
+	Block.prototype = Object.create( Entity.prototype );
+	Block.prototype.constructor = Block;
+
 	/**
 	 * Initializes all the physics properties of
 	 * the object.
@@ -82,7 +91,7 @@ define([
 	 * physics engine.
 	 *
 	 * @return {undefined}
-*/
+	 */
 	Block.prototype.initPhysics = function () {
 
 		// Physics based info

@@ -1,5 +1,5 @@
 
-define(['libs/game/functionalStuff/box2dvariables'], function (box2d) {
+define(['libs/gamestrut/functionalStuff/box2dvariables'], function (box2d) {
    var Level = function (options) {
 
    	   // CHECK FOR options

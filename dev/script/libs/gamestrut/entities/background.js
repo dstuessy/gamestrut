@@ -1,9 +1,11 @@
 
 define([
-	'libs/game/entities/entityMethods'
-], function ( entityMethods ) {
+	'libs/gamestrut/entities/entity'
+], function ( Entity ) {
 
 	var Background = function ( options ) {
+
+		Entity.call( this );
 
 		// ADD ALL OPTIONS
 		for (var key in options) {
@@ -25,21 +27,16 @@ define([
 		this.y = options.y || 0;
 		this.width = ( typeof this.texture != 'undefined' ) ? this.texture.width : 0;
 		this.height = ( typeof this.texture != 'undefined' ) ? this.texture.height : 0;
-
-		// ADD ALL entityMethods FUNCTIONS
-		for (var key in entityMethods) {
-			
-			var func = entityMethods[key];
-
-			this[key] = func.bind(this);
-		}
-
+		
 		// INITIALIZE STUFF
 		// COLLISIONS
 		this.initCollisions();
 		// CONTROLLERS
 		this.initControllers();
 	};
+
+	Background.prototype = Object.create( Entity.prototype );
+	Background.prototype.constructor = Background;
 
 	return Background;
 });

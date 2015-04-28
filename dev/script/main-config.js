@@ -5,8 +5,8 @@ require.config({
 		jquery: 'libs/jquery',
 		Mousetrap: 'libs/mousetrap',
 		box2dweb: 'libs/box2dweb.min',
-		game: 'libs/game/game',
-		gamestrut: 'libs/game/gamestrut'
+		game: 'libs/gamestrut/game',
+		gamestrut: 'libs/gamestrut/gamestrut'
 	}
 });
 

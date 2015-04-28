@@ -30,7 +30,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						// MOVES PLAYER TO THE RIGHT
 						moveRight: function () {
 
-							console.log('moveRight!');
+							//console.log('moveRight!');
 
 							this.setLinearVelocity({x: this.moveVelocity});
 							this.setAngularVelocity(0.2);
@@ -42,7 +42,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						// MOVES PLAYER TO THE LEFT
 						moveLeft: function () {
 
-							console.log('moveLeft!');
+							//console.log('moveLeft!');
 
 							this.setLinearVelocity({x: -1*( this.moveVelocity )});
 							this.setAngularVelocity(-0.2);
@@ -54,7 +54,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						// ADJUSTS PLAYER TO A STANDING POSITION
 						standing: function () {
 
-							console.log('standing');
+							//console.log('standing');
 
 							this.setAngle(0);
 							this.setLinearVelocity(0);
@@ -63,7 +63,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						// JUMPS PLAYER
 						jump: function () {
 
-							console.log('jump!');
+							//console.log('jump!');
 
 							// DEFINE jumpCount
 							this.jumpCount = this.jumpCount || 1;
@@ -98,7 +98,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 							this.jumpCount = undefined;
 						},
 						save: function () {
-							console.log('save!');
+							//console.log('save!');
 						},
 						controllers: {
 							'jump': {
@@ -239,6 +239,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 
 			console.log(level);
 			console.log(level.type);
+			console.log(level instanceof GameStrut.Level);
 
 			var game = new GameStrut.Game({
 				canvasID: 'canvas',

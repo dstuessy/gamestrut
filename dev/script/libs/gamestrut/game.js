@@ -1,16 +1,16 @@
 
 
 define([
-	   'Mousetrap', 
-	   'libs/game/functionalStuff/box2dvariables',
-	   'libs/game/functionalStuff/key',
-	   'libs/game/functionalStuff/controller',
-	   'libs/game/entities/level',
-	   'libs/game/entities/background',
-	   'libs/game/entities/textEntity',
-	   'libs/game/entities/entityMethods',
-	   'libs/game/entities/animateEntity'
-], function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, entityMethods, AnimateEntity) {
+	'Mousetrap', 
+	'libs/gamestrut/functionalStuff/box2dvariables',
+	'libs/gamestrut/functionalStuff/key',
+	'libs/gamestrut/functionalStuff/controller',
+	'libs/gamestrut/entities/level',
+	'libs/gamestrut/entities/background',
+	'libs/gamestrut/entities/textEntity',
+	'libs/gamestrut/entities/entity',
+	'libs/gamestrut/entities/animateEntity'
+], function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, Entity, AnimateEntity) {
 
 	var Game = function (options) {
 
@@ -69,20 +69,12 @@ define([
 		// START GAME LOOP
 		var intervalId = setInterval(run(),0);
 
-
-		/* ESC */
-		/*Mousetrap.bind('esc',function(){key.onKeydown(key.ESC);},'keydown');*/
-		/*Mousetrap.bind('esc',function(){key.onKeyUp(key.ESC);},'keyup');*/
-		/**//* No Key Pressed */
-		/*Mousetrap.bind('none',function(){key.onKeydown(key.NONE);},'keydown');*/
-		/*Mousetrap.bind('none',function(){key.onKeyUp(key.NONE);},'keyup');*/
-
 		/* RUN */
 		function run(){
 			var fps = 45;
 			var loops = 0, skipTicks = 1000 / fps,
-			maxFrameSkip = 10,
-			nextGameTick = (new Date).getTime();
+				maxFrameSkip = 10,
+				nextGameTick = (new Date).getTime();
 			return function () {
 				loops = 0;
 				while ( ((new Date).getTime() > nextGameTick) && (loops < maxFrameSkip) ) {
@@ -110,7 +102,7 @@ define([
 
 		/* INPUT */
 		function input(){
-			
+
 			// EXECUTE GAME CONTROLLERS
 			for(var i = 0; i in self.controllers; i++){
 				self.controllers[i].run();
@@ -124,7 +116,7 @@ define([
 				for (var i in levelControllers) {
 
 					var controller = levelControllers[i];
-					
+
 					controller.run();
 				}
 
@@ -186,7 +178,7 @@ define([
 			}
 
 			listener.BeginContact = function(contact){
-				
+
 				// GET ENTITY DATA
 				var bodyA = contact.GetFixtureA().GetBody();
 				var bodyB = contact.GetFixtureB().GetBody();
@@ -202,7 +194,7 @@ define([
 				}
 			};
 			listener.EndContact = function(contact){
-				
+
 				// GET ENTITY DATA
 				var bodyA = contact.GetFixtureA().GetBody();
 				var bodyB = contact.GetFixtureB().GetBody();
@@ -218,7 +210,7 @@ define([
 				}
 			};
 			listener.PreSolve = function(contact,oldManifold){
-				
+
 				// GET ENTITY DATA
 				var bodyA = contact.GetFixtureA().GetBody();
 				var bodyB = contact.GetFixtureB().GetBody();
@@ -234,7 +226,7 @@ define([
 				}
 			};
 			listener.PostSolve = function(contact, impulse){
-				
+
 				// GET ENTITY DATA
 				var bodyA = contact.GetFixtureA().GetBody();
 				var bodyB = contact.GetFixtureB().GetBody();
@@ -279,7 +271,7 @@ define([
 	 * Pauses the Game object's physics engine.
 	 *
 	 * @return {undefined}
-*/
+	 */
 	Game.prototype.pausePhysics = function () {
 		this.timeStep = 0;
 	};
@@ -288,7 +280,7 @@ define([
 	 * Resumes the Game object's physics engine.
 	 *
 	 * @return {undefined}
-*/
+	 */
 	Game.prototype.resumePhysics = function () {
 		this.timeStep = 1/45;
 	};
@@ -304,7 +296,7 @@ define([
 	/**
 	 * Gets the width of the canvas.
 	 * @return {float} The width of the canvas.
-*/
+	 */
 	Game.prototype.getCanvasWidth = function () {
 		return this.canvas.width;
 	}
@@ -317,12 +309,12 @@ define([
 	}
 
 	/**
-	* Obtains and returnes the mouse coordinates
-	* relative to the canvas element.
-	*
-	* @param {Event} event A jQuery Event Object.
-	* @return {Object} An object holding x and y coordinates.
-	*/
+	 * Obtains and returnes the mouse coordinates
+	 * relative to the canvas element.
+	 *
+	 * @param {Event} event A jQuery Event Object.
+	 * @return {Object} An object holding x and y coordinates.
+	 */
 	Game.prototype.getMousePos = function (event) {
 		var rect = canvas.getBoundingClientRect();
 		return {
@@ -332,17 +324,17 @@ define([
 	};
 
 	/**
-	* Sets the canvas width.
-	* @param {float} width The width of the canvas.
-	*/
+	 * Sets the canvas width.
+	 * @param {float} width The width of the canvas.
+	 */
 	Game.prototype.setCanvasWidth = function (width) {
 		this.canvas.width = width;
 	};
 
 	/**
-	* Sets the canvas height.
-	* @param {float} height The height of the canvas.
-	*/
+	 * Sets the canvas height.
+	 * @param {float} height The height of the canvas.
+	 */
 	Game.prototype.setCanvasHeight = function (height) {
 		this.canvas.height = height;
 	};
@@ -383,17 +375,17 @@ define([
 	};
 
 	/**
-	* Adds a Level object to the levels array
-	* @param {object} lvl A Level object.
-*/
+	 * Adds a Level object to the levels array
+	 * @param {object} lvl A Level object.
+	 */
 	Game.prototype.addLevel = function (lvl) {
 		this.levels[lvl.id] = lvl;
 	};
 
 	/**
-	* Sets the current level of the game
-	* @param {number} lvlID [description]
-*/
+	 * Sets the current level of the game
+	 * @param {number} lvlID [description]
+	 */
 	Game.prototype.setCurrentLevel = function (lvlID) {
 		this.current_level = levels[lvlID];
 	};
@@ -408,16 +400,16 @@ define([
 	};
 
 	/**
-	* Adds a given function to the logics array.
-	* This is so users can add custom game logic.
-	*
-	* e.g. an entity shall be respawned on the other side of the screen
-	*  when at the edge of the screen.
-	*  Or when the user feels particularly sadistic, an entity
-	*  shall die at a random moment in time. :P
-	*  
-	* @param {function} func The function that shall be executed.
-*/
+	 * Adds a given function to the logics array.
+	 * This is so users can add custom game logic.
+	 *
+	 * e.g. an entity shall be respawned on the other side of the screen
+	 *  when at the edge of the screen.
+	 *  Or when the user feels particularly sadistic, an entity
+	 *  shall die at a random moment in time. :P
+	 *  
+	 * @param {function} func The function that shall be executed.
+	 */
 	Game.prototype.addLogic = function (func) {
 		logics.push(func);
 	};

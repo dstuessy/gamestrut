@@ -1,6 +1,6 @@
 define([
 	'Mousetrap', 
-	'libs/game/functionalStuff/key'
+	'libs/gamestrut/functionalStuff/key'
 ], function (Mousetrap, Key) {
 	/**
 	 * This object executes a given function when one or more given keys are pressed or released.

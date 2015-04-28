@@ -1,9 +1,11 @@
 
 define([
-   'libs/game/entities/entityMethods'
-], function ( entityMethods ) {
+   'libs/gamestrut/entities/entity'
+], function ( Entity ) {
 
 	var TextEntity = function ( options ) {
+
+		Entity.call( this );
 		
 		// ADD ALL OPTIONS
 		for (var key in options) {
@@ -25,13 +27,7 @@ define([
 		this.fontColor = this.fontColor || 'black';
 		this.fontFamily = this.fontFamily || 'Arial';
 
-		// ADD ALL entityMethods FUNCTIONS
-		for (var key in entityMethods) {
-			
-			var func = entityMethods[key];
-
-			this[key] = func.bind(this);
-		}
+		console.log( this );
 
 		// INITIALIZE STUFF
 		// COLLISIONS
@@ -39,6 +35,9 @@ define([
 		// CONTROLLERS
 		this.initControllers();
 	};
+
+	TextEntity.prototype = Object.create( Entity.prototype );
+	TextEntity.constructor = TextEntity;
 
 	return TextEntity;
 });

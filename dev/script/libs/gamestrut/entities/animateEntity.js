@@ -1,34 +1,24 @@
 
 define([
-	   'Mousetrap',
-	   'libs/game/functionalStuff/key',
-	   'libs/game/functionalStuff/controller',
-	   'libs/game/functionalStuff/collision',
-	   'libs/game/functionalStuff/box2dvariables',
-	   'libs/game/entities/entityMethods',
-	   'libs/game/entities/level'
-], function (Mousetrap, Key, Controller, Collision, box2d, entityMethods, Level) {
+	'Mousetrap',
+	'libs/gamestrut/functionalStuff/key',
+	'libs/gamestrut/functionalStuff/controller',
+	'libs/gamestrut/functionalStuff/collision',
+	'libs/gamestrut/functionalStuff/box2dvariables',
+	'libs/gamestrut/entities/entity',
+	'libs/gamestrut/entities/level'
+], function (Mousetrap, Key, Controller, Collision, box2d, Entity, Level) {
 
-   /**
-	* Animate Entity Object 
-	*
-	* Represents an entity in a 'level'.
-	*
-	* @type {object} 
-*/
+	/**
+	 * Animate Entity Object 
+	 *
+	 * Represents an entity in a 'level'.
+	 *
+	 * @type object
+	 */
 	var AnimateEntity = function (options) {
 
-		// ADD ALL OPTIONS
-		for (var key in options) {
-			
-			this[key] = options[key];
-			
-			// BIND FUNCTIONS TO this OBJECT
-			if (typeof this[key] == 'function') {
-
-				this[key] = this[key].bind(this);
-			}
-		}
+		Entity.call( this, options );
 
 		// GENERAL STUFF
 		this.type = 'AnimateEntity';
@@ -55,13 +45,7 @@ define([
 		// SET SCALE
 		this.SCALE = this.scale || 40;
 
-		// ADD ALL entityMethods FUNCTIONS
-		for (var key in entityMethods) {
-			
-			var func = entityMethods[key];
-
-			this[key] = func.bind(this);
-		}
+		console.log( this );
 
 		// INITIALIZE STUFF
 		// COLLISIONS
@@ -70,16 +54,21 @@ define([
 		this.initControllers();
 		// PHYSICS
 		if (typeof this.level != 'undefined') {
-		   this.initPhysics();
+			this.initPhysics();
 		}
 	};
 
+	// SET PROTOTYPE INHERITENCE
+	AnimateEntity.prototype = Object.create( Entity.prototype );
+	// SET CONSTRUCTOR OF ANIMATE ENTIY PROTOTYPE
+	AnimateEntity.prototype.constructor = AnimateEntity;
+
 	/**
-	* Sets up the entity for box2D
-	* physics.
-	*
-	* @return {undefined}
-*/
+	 * Sets up the entity for box2D
+	 * physics.
+	 *
+	 * @return {undefined}
+	 */
 	AnimateEntity.prototype.initPhysics = function () {
 
 		/* Physics Stuff */
