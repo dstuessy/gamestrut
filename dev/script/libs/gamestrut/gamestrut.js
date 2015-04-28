@@ -9,9 +9,9 @@ define([
 	'libs/gamestrut/entities/textEntity',
 	'libs/gamestrut/entities/entity',
 	'libs/gamestrut/entities/animateEntity',
-	'libs/gamestrut/entities/block',
+	'libs/gamestrut/entities/staticEntity',
 	'game'
-], function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, Entity, AnimateEntity, Block, Game) {
+], function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, Entity, AnimateEntity, StaticEntity, Game) {
 
 	/*! 
 	 * GameStrut, Version 2.0!
@@ -88,10 +88,10 @@ define([
 		AnimateEntity: AnimateEntity,
 
 		/** 
-		 * A Block class.
-		 * @type {Block}
+		 * A StaticEntity class.
+		 * @type StaticEntity
 		 */
-		Block: Block,
+		StaticEntity: StaticEntity,
 
 		/**
 		 * Holds and manages all the key codes pressed.

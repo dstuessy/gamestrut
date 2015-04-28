@@ -8,34 +8,34 @@ define([
 ], function (box2d, Entity, Level){
 
 	/**
-	 * A block object. Basically an entity
+	 * A StaticEntity object. Basically an entity
 	 * that isn't animated in terms of physics 
 	 * but still collides. It will collide
 	 * with other objects, but will not react
 	 * to any of the physics. 
 	 *
-	 * i.e. if an AnimateEntity hits a Block,
-	 * the Block will not move and neither
+	 * i.e. if an AnimateEntity hits a StaticEntity,
+	 * the StaticEntity will not move and neither
 	 * will it under the force of gravity. BUT
 	 * it will interact physically with the 
 	 * AnimateEntity.
 	 *
-	 * @param {object} options A JSON object containing all the options for the Block object.
+	 * @param {object} options A JSON object containing all the options for the StaticEntity object.
 	 */
-	var Block = function (options) {
+	var StaticEntity = function (options) {
 
 		Entity.call( this, options );
 
 		// SET PROPERTIES
-		this.type = 'Block';
+		this.type = 'StaticEntity';
 
 		console.log( this );
 
 		this.init();
 	};
 
-	Block.prototype = Object.create( Entity.prototype );
-	Block.prototype.constructor = Block;
+	StaticEntity.prototype = Object.create( Entity.prototype );
+	StaticEntity.prototype.constructor = StaticEntity;
 
-	return Block;
+	return StaticEntity;
 });

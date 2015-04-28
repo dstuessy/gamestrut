@@ -65,7 +65,7 @@ define([
 			(
 				this.type == 'AnimateEntity'
 				||
-				this.type == 'Block'
+				this.type == 'StaticEntity'
 			)
 			&&
 			typeof this.level != 'undefined'
@@ -381,8 +381,8 @@ define([
 			this.drawBody(context);
 		}
 
-		// DRAW FOR BLOCK
-		if (this.type == 'Block') {
+		// DRAW FOR StaticEntity
+		if (this.type == 'StaticEntity') {
 			this.drawBody( context );
 		}
 
@@ -445,7 +445,7 @@ define([
 		}
 
 
-		// CONTINUE FOR DRAWING ANIMATE ENTITY OR BLOCK ENTITY
+		// CONTINUE FOR DRAWING ANIMATE ENTITY OR STATIC ENTITY
 
 		this.x = (this.body.GetPosition().x * this.SCALE) - this.width/2;
 		this.y = (this.body.GetPosition().y * this.SCALE) - this.height/2;

@@ -166,7 +166,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						color: 'yellow',
 						zindex: '1'
 					}),
-					new GameStrut.Block({
+					new GameStrut.StaticEntity({
 						id: 'block_ceiling',
 						x: 0,
 						y: 0,
@@ -175,7 +175,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						color: 'white',
 						zindex: '2'
 					}),
-					new GameStrut.Block({
+					new GameStrut.StaticEntity({
 						id: 'block_left_wall',
 						x: 0,
 						y: 0,
@@ -184,7 +184,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						color: 'white',
 						zindex: '2'
 					}),
-					new GameStrut.Block({
+					new GameStrut.StaticEntity({
 						id: 'block_right_wall',
 						x: canvasWidth,
 						y: 0,
@@ -193,7 +193,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						color: 'white',
 						zindex: '2'
 					}),
-					new GameStrut.Block({
+					new GameStrut.StaticEntity({
 						id: 'block_floor',
 						x: 0,
 						y: canvasHeight,
@@ -202,7 +202,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						color: 'white',
 						zindex: '2'
 					}),
-					new GameStrut.Block({
+					new GameStrut.StaticEntity({
 						id: 'block_test',
 						x: 10,
 						y: 200,
@@ -211,7 +211,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						color: 'brown',
 						zindex: '2'
 					}),
-					new GameStrut.Block({
+					new GameStrut.StaticEntity({
 						id: 'block_test_2',
 						x: 400,
 						y: canvasHeight-25,
