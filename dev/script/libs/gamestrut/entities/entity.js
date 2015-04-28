@@ -9,8 +9,6 @@ define([
 
 	var Entity = function ( options ) {
 
-		console.log( options );
-
 		// ADD ALL OPTIONS
 		for (var key in options) {
 
@@ -23,6 +21,90 @@ define([
 			}
 		}
 
+		// SET DEFAULTS
+		this.id = this.id;
+		this.x = this.x || 0;
+		this.y = this.y || 0;
+		this.width = this.width || 40;
+		this.height = this.height || 40;
+		this.level = this.level; 
+
+		// TEXTURE STUFF
+		this.textures = this.textures || [];
+		this.texture = this.texture || this.textures[0] || undefined;
+		this.previousTexture = this.texture;
+		this.sx = this.sx || 0;
+		this.sy = this.sy || 0;
+		this.angle = this.angle || 0;
+		this.color = this.color || 'green';
+		this.zindex = this.zindex || '0';
+
+		// SET SCALE
+		this.SCALE = this.SCALE || 40;
+	};
+
+	/**
+	 * Initialize certain properties
+	 * that require the general properties to
+	 * be set. e.g. collisions and controllers
+	 * require a list of collision and 
+	 * controller listeners to be set previously.
+	 *
+	 * @return undefined
+	 */
+	Entity.prototype.init = function () {
+
+		// INITIALIZE STUFF
+		
+		// collision
+		this.initCollisions();
+		// controllers 
+		this.initControllers();
+		// physics
+		if (
+			(
+				this.type == 'AnimateEntity'
+				||
+				this.type == 'Block'
+			)
+			&&
+			typeof this.level != 'undefined'
+		) {
+			this.initPhysics();
+		}
+	};
+
+	/**
+	 * Initializes all the physics properties of
+	 * the object.
+	 * This essentially adds the object to the box2d
+	 * physics engine.
+	 *
+	 * @return {undefined}
+	 */
+	Entity.prototype.initPhysics = function () {
+
+		// SET BODY TYPE BASED ON ENTITY TYPE
+		var type = (this.type == 'AnimateEntity') ? box2d.b2Body.b2_dynamicBody : box2d.b2Body.b2_staticBody;
+
+		/* Physics Stuff */
+		var fixDef = new box2d.b2FixtureDef();
+		fixDef.density = this.density || 1;
+		fixDef.restitution = this.restitution || 0;
+		fixDef.friction = this.friction || 0.5;
+
+		var bodyDef = new box2d.b2BodyDef();
+		bodyDef.type = type;
+		bodyDef.position.x = (this.x + (this.width/2)) / this.SCALE;
+		bodyDef.position.y = (this.y + (this.height/2)) / this.SCALE;
+		bodyDef.angle = this.angle;
+
+		fixDef.shape = new box2d.b2PolygonShape(); // sets type of shape
+		fixDef.shape.SetAsBox((this.width / this.SCALE) / 2, (this.height / this.SCALE) / 2); // sets width & height
+
+		this.body = this.level.world.CreateBody(bodyDef);
+		this.body.SetUserData(this);
+		this.body.CreateFixture(fixDef); // adds the defined body to the defined world.
 	};
 
 	/**
@@ -221,6 +303,11 @@ define([
 		}
 	};
 
+	/**
+	 * Initialize the controller listeners.
+	 *
+	 * @return undefined
+	 */
 	Entity.prototype.initControllers = function () {
 
 		// SET UP CONTROLLERS
