@@ -13,8 +13,6 @@ define([
 		this.fontColor = this.fontColor || 'black';
 		this.fontFamily = this.fontFamily || 'Arial';
 
-		console.log( this );
-
 		this.init();
 	};
 

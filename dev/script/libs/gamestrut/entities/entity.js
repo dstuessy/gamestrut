@@ -61,16 +61,14 @@ define([
 		// controllers 
 		this.initControllers();
 		// physics
-		if (
-			(
-				this.type == 'AnimateEntity'
-				||
-				this.type == 'StaticEntity'
-			)
-			&&
-			typeof this.level != 'undefined'
-		) {
-			this.initPhysics();
+		switch (this.type) {
+			case 'AnimateEntity':
+			case 'StaticEntity':
+				if (typeof this.level !== 'undefined') {
+					this.initPhysics();
+				}
+				break;
+			default:
 		}
 	};
 

@@ -29,8 +29,6 @@ define([
 		// SET PROPERTIES
 		this.type = 'StaticEntity';
 
-		console.log( this );
-
 		this.init();
 	};
 

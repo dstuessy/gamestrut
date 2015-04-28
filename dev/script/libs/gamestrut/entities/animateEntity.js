@@ -26,8 +26,6 @@ define([
 		// ANIMATION STUFF
 		this.time = new Date().getTime();
 
-		console.log( this );
-
 		this.init();
 	};
 
