@@ -3,6 +3,7 @@ gamestrut.js
 
 ### Todo list:
 
+* Remove jQuery requirement.
 * Level scrolling i.e. scroll level horizontally/vertically when character is at edge of canvas
 * &#10004; "z-indexed" entities.
 * Make background zoomable.
@@ -13,6 +14,11 @@ gamestrut.js
 * Proper implementation of sprite-based animation.
 * Clean-up redundant/dead code.
 * Fix Entity inheritence from "entityMethods". Turn entityMethods to Entity function. Use call() in all entities to inherit from Entity.
+
+
+==============
+### Requirements
+**Currently requires jQuery**
 
 ==============
 ### Source Files
