@@ -8,12 +8,12 @@ gamestrut.js
 * &#10004; "z-indexed" entities.
 * Make background zoomable.
 * Nested entities e.g. TextEntity within an Animate Entity -- useful for menus.
-* Have game.mouselisteners that retrieve target game entities under mouse events -- like jquery's event object.
+* Have game.mouselisteners that retrieve target game entities under mouse events -- like jquery's event listeners.
 * Maybe entity group?
-* Animated background entities.
-* Proper implementation of sprite-based animation.
-* Clean-up redundant/dead code.
-* Fix Entity inheritence from "entityMethods". Turn entityMethods to Entity function. Use call() in all entities to inherit from Entity.
+* Animated background entities (with sprites).
+* Propper implementation of sprite-based animation.
+* Clean-up redundant/dead code -- ONGOING.
+* &#10004; Fix Entity inheritence from "entityMethods". Setup prototype inheritance to Entity function.
 
 
 ==============
