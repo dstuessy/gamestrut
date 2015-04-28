@@ -3,8 +3,8 @@
 	paths: {
 		Mousetrap: 'libs/mousetrap',
 		box2dweb: 'libs/box2dweb.min',
-		game: 'libs/game/game',
-		gamestrut: 'libs/game/gamestrut'
+		game: 'libs/gamestrut/game',
+		gamestrut: 'libs/gamestrut/gamestrut'
 	},
 	shim: {
 		'game': {
@@ -14,7 +14,7 @@
 			deps: ['game']
 		}
 	},
-	include: ["libs/game/gamestrut.js"],
+	include: ["libs/gamestrut/gamestrut.js"],
 	out: "../build/gamestrut.js",
 	optimize: 'none', // uglifies code
 	transformAMDChecks: false,

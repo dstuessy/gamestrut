@@ -2,7 +2,7 @@
 /** 
  * mousetrap v1.3 craig.is/killing/mice 
  */
-var box2dweb, libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_controller, libs_game_entities_level, libs_game_functionalStuff_collision, libs_game_entities_entityMethods, libs_game_entities_background, libs_game_entities_textEntity, libs_game_entities_animateEntity, libs_game_entities_block, game, libs_game_gamestrutjs;
+var box2dweb, libs_gamestrut_functionalStuff_box2dvariables, libs_gamestrut_functionalStuff_key, libs_gamestrut_functionalStuff_controller, libs_gamestrut_entities_level, libs_gamestrut_functionalStuff_collision, libs_gamestrut_entities_entity, libs_gamestrut_entities_background, libs_gamestrut_entities_textEntity, libs_gamestrut_entities_animateEntity, libs_gamestrut_entities_block, game, libs_gamestrut_gamestrutjs;
 (function () {
   function s(a, c, b) {
     a.addEventListener ? a.addEventListener(c, b, !1) : a.attachEvent('on' + c, b);
@@ -9154,7 +9154,7 @@ for (i = 0; i < Box2D.postDefs.length; ++i)
   Box2D.postDefs[i]();
 delete Box2D.postDefs;
 box2dweb = undefined;
-libs_game_functionalStuff_box2dvariables = function () {
+libs_gamestrut_functionalStuff_box2dvariables = function () {
   var box2d = {
     b2Vec2: Box2D.Common.Math.b2Vec2,
     b2BodyDef: Box2D.Dynamics.b2BodyDef,
@@ -9170,7 +9170,7 @@ libs_game_functionalStuff_box2dvariables = function () {
   };
   return box2d;
 }();
-libs_game_functionalStuff_key = function () {
+libs_gamestrut_functionalStuff_key = function () {
   var key = {
     pressed: {},
     /**Checks to see if a key is pressed
@@ -9284,7 +9284,7 @@ libs_game_functionalStuff_key = function () {
   };
   return key;
 }();
-libs_game_functionalStuff_controller = function (Mousetrap, Key) {
+libs_gamestrut_functionalStuff_controller = function (Mousetrap, Key) {
   /**
   * This object executes a given function when one or more given keys are pressed or released.
   *
@@ -9368,8 +9368,8 @@ libs_game_functionalStuff_controller = function (Mousetrap, Key) {
     }
   };
   return Controller;
-}(Mousetrap, libs_game_functionalStuff_key);
-libs_game_entities_level = function (box2d) {
+}(Mousetrap, libs_gamestrut_functionalStuff_key);
+libs_gamestrut_entities_level = function (box2d) {
   var Level = function (options) {
     // CHECK FOR options
     if (typeof options == 'undefined') {
@@ -9585,8 +9585,8 @@ libs_game_entities_level = function (box2d) {
     this.initialize();
   };
   return Level;
-}(libs_game_functionalStuff_box2dvariables);
-libs_game_functionalStuff_collision = function () {
+}(libs_gamestrut_functionalStuff_box2dvariables);
+libs_gamestrut_functionalStuff_collision = function () {
   var Collision = function (event, objAId, objBId, execute) {
     this.event = event;
     this.objAId = objAId;
@@ -9615,334 +9615,8 @@ libs_game_functionalStuff_collision = function () {
   };
   return Collision;
 }();
-libs_game_entities_entityMethods = function (box2d, key, Collision, Controller) {
-  var entityMethods = {
-    /**
-     * Sets an attibute to the animate entity.
-     *
-     * If attibute is a function, it is 
-     * nested within a wrapper function that 
-     * allows the executed function to refer to
-     * 'this' as the animate entity.
-     *  
-     * @param {string} key String representing the key of the attribute.
-     * @param {any} key Any data type to be set under the key.
-     * @return {undefined}
-     */
-    set: function (key, attribute) {
-      // CHECK THAT attribute ISN'T UNDEFINED
-      if (typeof attribute == 'undefined') {
-        // ERROR OUTPUT
-        console.log('cannot set undefined to level. ' + key + ' is undefined.');
-        return;
-      }
-      // IF attribute IS FUNCTION
-      if (typeof attribute == 'function') {
-        // ADD FUNCTION TO LEVEL WITH A WRAPPER THAT BINDS 'this' 
-        // TO THE FUNCTIONS SCOPRE AS ITS PARAMETER
-        this[key] = attribute.bind(this);
-      } else {
-        // SET attribute UNDER key
-        this[key] = attribute;
-      }
-    },
-    /**
-     * Returns the position of the given entity.
-     *
-     * x and y coordinates are translated into the canvas' scale.
-     *
-     * x and y coordinates are centered to the entity.
-     * 
-     * @return {object}     An object holding the translated coordinates of the given entity.
-     */
-    getPosition: function () {
-      // GET POSITION FROM BOX2D BODY 
-      var x = this.body.GetPosition().x * this.SCALE;
-      var y = this.body.GetPosition().y * this.SCALE;
-      // RETURN POSITION
-      return {
-        x: x,
-        y: y
-      };
-    },
-    /**
-     * Returns the angle of the given entity in radians.
-     * 
-     * @return {float}     The angle in radians of the given entity.
-     */
-    getAngle: function () {
-      return this.body.GetAngle();
-    },
-    /**
-     * Sets the position of the entity.
-     *
-     * x and y are set to box2d body's scale.
-     *
-     * x and y are centered to animateEntity's dimensions.
-     *
-     * @param {object} pos JSON object with x and y coordinate values. Either is optional.
-     *
-     * @return {undefined}
-     */
-    setPosition: function (pos) {
-      // IF POS IS DEFINED
-      if (typeof pos != 'undefined') {
-        this.body.SetAwake(true);
-        // GET X AND Y POSITIONS
-        var x = pos.x || this.getPosition().x;
-        var y = pos.y || this.getPosition().y;
-        // SET X AND Y POSITIONS TO SCALE FOR PHYSICS ENGINE
-        x = x / this.SCALE;
-        y = y / this.SCALE;
-        // ADD X AND Y TO VECTOR OBJECT
-        pos = new box2d.b2Vec2(x, y);
-        // SET THE BOX2D BODY POSITION
-        this.body.SetPosition(pos);
-      }
-    },
-    /**
-     * Sets angle of object's box2d boxy.
-     *
-     * @param {number} angle Number representing degrees in Radian.
-     * @return {undefined}
-     */
-    setAngle: function (angle) {
-      // WAKE UP BODY
-      this.body.SetAwake(true);
-      // RESET ANGULAR PHYSICS
-      this.body.SetAngularVelocity(0);
-      // SET ANGLE
-      this.body.SetAngle(angle);
-    },
-    /**
-     * Sets the angular velocity of 
-     * the object's box2d body.
-     *
-     * @param {number} angle Number representing degrees in Radian.
-     * @return {undefined}
-     */
-    setAngularVelocity: function (angle) {
-      // WAKE UP BODY
-      this.body.SetAwake(true);
-      // SET ANGULAR VELOCITY
-      this.body.SetAngularVelocity(angle);
-    },
-    /**
-     * Sets linear velocity of object's box2d body.
-     *
-     * @param {object} vals Object holding x and y values.
-     * @return {undefined}
-     */
-    setLinearVelocity: function (vals) {
-      // WAKE UP BODY
-      this.body.SetAwake(true);
-      // SET LINEAR VELOCITY 
-      this.body.GetLinearVelocity().x = vals.x || this.body.GetLinearVelocity().x;
-      this.body.GetLinearVelocity().y = vals.y || this.body.GetLinearVelocity().y;
-    },
-    /**
-     * Adds a texture to the texture array.
-     *
-     * @param {string} textureID  The ID of the texture e.g. 'running'.
-     * @param {string} textureURL The URL of the texture e.g. 'images/player.png'.
-     */
-    addTexture: function (textureID, textureURL) {
-      var image = new Image();
-      image.src = textureURL;
-      this.textures[textureID] = image;
-    },
-    /**
-     * Sets the current texture.
-     *
-     * @param {string} textureID The ID of the texture e.g. 'running'.
-     */
-    setTexture: function (textureID) {
-      if (typeof this.texture != 'undefined') {
-        this.texture = this.textures[textureID];
-      } else {
-        this.texture = this.textures[textureID];
-        this.previousTexture = this.texture;
-      }
-    },
-    /**
-     * Set level of an entity.
-     * Initialize physics of entity if it has the function.
-     *
-     * @return {undefined}
-     */
-    setLevel: function (level) {
-      // ADD LEVEL IF IT'S DEFINED AND OF TYPE 'level'
-      if (typeof level != 'undefined' && level.type == 'Level') {
-        this.level = level;
-        if (typeof this.initPhysics == 'undefined')
-          return;
-        this.initPhysics();
-      } else {
-        // ERROR OUTPUT
-        console.log(level);
-        console.log('could not set above ' + level + ' as level.');
-      }
-    },
-    initControllers: function () {
-      // SET UP CONTROLLERS
-      for (var controllerIndex in this.controllers) {
-        // GET CONTROLLER
-        var controller = this.controllers[controllerIndex];
-        // SET CONTROLLER VALUES
-        var event = controller.event;
-        var key = controller.key;
-        var preventDefault = controller.preventDefault;
-        var oneTimePress = controller.oneTimePress;
-        var execute = controller.execute;
-        // SET EXECUTE TO FUNCTION IN OBJECT
-        // OR BIND THE NEW FUNCTION TO THE OBJECT
-        execute = typeof execute == 'string' && typeof this[execute] != 'undefined' ? this[execute] : execute.bind(this);
-        // CREATE CONTROLLER
-        this.controllers[controllerIndex] = new Controller(key, execute, event, oneTimePress, preventDefault);
-      }
-    },
-    /**
-     * Initializes all collision listeners for the animate entity.
-     *
-     * @return {undefined}
-     */
-    initCollisions: function () {
-      this.collisions = this.collisions || [];
-      // FOR EACH CONTROLLER OF THIS ANIMATE ENTITY
-      for (var eventString in this.collisions) {
-        var i = i || 0;
-        var tempArray = tempArray || [];
-        var event = this.collisions[eventString];
-        for (var objBId in event) {
-          // GET EXECUTE
-          var execute = event[objBId];
-          // SET EXECUTE EITHER AS FUNCTION OF this OR CLOSURE
-          execute = typeof execute == 'string' ? this[execute] : execute.bind(this);
-          // CREATE COLLISION FUNCTION
-          tempArray[i] = new Collision(eventString, this.id, objBId, execute);
-          i++;
-        }
-      }
-      // SET COLLISIONS
-      this.collisions = tempArray || [];
-    },
-    /* painter's algorithm:
-     * the sword, shield, and body are drawn in an order
-     * depending on the direction the animateEntity is 
-     * facing.
-     */
-    draw: function (context) {
-      // DRAW FOR ANIMATE ENTITY
-      if (this.type == 'AnimateEntity' && !this.dead) {
-        if (this.lookingRight) {
-          //this.drawShield(context);
-          this.drawBody(context);  //this.drawSword(context);
-        }
-        if (this.lookingLeft) {
-          //this.drawSword(context);
-          this.drawBody(context);  //this.drawShield(context);
-        }
-      }
-      // DRAW FOR BLOCK
-      if (this.type == 'Block') {
-        this.drawBody(context);
-      }
-      // DRAW FOR BACKGROUND
-      if (this.type == 'Background') {
-        this.drawBody(context);
-      }
-      // DRAW FOR TEXT
-      if (this.type == 'Text') {
-        this.drawBody(context);
-      }
-    },
-    drawBody: function (context) {
-      // DRAW TEXT IF TEXT ENTITY
-      if (this.type == 'Text') {
-        // DRAW TEXT
-        context.font = this.fontSize + 'px ' + this.fontFamily;
-        context.fillStyle = this.fontColor;
-        context.fillText(this.text, this.x, this.y);
-        return;
-      }
-      // DRAW BACKGORUND IF BACKGROUND ENTITY
-      if (this.type == 'Background') {
-        // DRAW BACKGROUND
-        if (typeof this.texture != 'undefined') {
-          var image = new Image();
-          image.src = this.texture;
-          // DRAW TEXTURE
-          context.drawImage(image, this.x, this.y);
-        } else {
-          // DRAW COLOR
-          context.fillStyle = this.color;
-          context.fillStyle = 'yellow';
-          context.fillRect(this.x, this.y, context.canvas.width, context.canvas.height);
-        }
-        return;
-      }
-      // CONTINUE FOR DRAWING ANIMATE ENTITY OR BLOCK ENTITY
-      this.x = this.body.GetPosition().x * this.SCALE - this.width / 2;
-      this.y = this.body.GetPosition().y * this.SCALE - this.height / 2;
-      this.angle = this.body.GetAngle();
-      if (this.texture && (this.sx >= this.texture.naturalWidth || this.previousTexture.src != this.texture.src)) {
-        this.sx = 0;
-      }
-      context.save();
-      // DRAW SHADOW
-      context.shadowBlur = 10;
-      context.shadowColor = 'black';
-      context.translate(this.x + this.width / 2, this.y + this.height / 2);
-      context.rotate(this.angle);
-      context.translate(-(this.x + this.width / 2), -(this.y + this.height / 2));
-      // DRAW ENTITY
-      if (typeof this.texture != 'undefined') {
-        // DRAW TEXTURE
-        context.drawImage(this.texture, this.sx, this.sy, this.width, this.height, this.x, this.y, this.width, this.height);
-      } else {
-        // DRAW COLOR
-        context.fillStyle = this.color;
-        context.fillRect(this.x, this.y, this.width, this.height);
-      }
-      context.rotate(-this.angle);
-      context.restore();
-      var timeDif = new Date().getTime() - this.time;
-      if (this.texture && timeDif >= 400) {
-        this.sx = this.sx + this.width;
-        this.time = new Date().getTime();
-      }
-      this.previousTexture = this.texture;
-    },
-    drawShield: function (context) {
-      if (this.hasShield) {
-        var shield = this.shield;
-        context.drawImage(shield.texture, shield.sx, shield.sy, shield.width, shield.height, shield.x, shield.y, shield.width, shield.height);
-      }
-    },
-    drawSword: function (context) {
-      if (this.hasSword) {
-        var sword = this.sword;
-        context.save();
-        context.translate(sword.x, sword.y);
-        context.rotate(sword.rotation);
-        context.translate(-sword.x, -sword.y);
-        context.drawImage(sword.texture, sword.sx, sword.sy, sword.width, sword.height, sword.x, sword.y - sword.height / 2, sword.width, sword.height);
-        context.rotate(-sword.rotation);
-        context.restore();  /* 
-                            // Allows visualisation of the attack line
-                            context.fillStyle = 'black';
-                            context.beginPath();
-                            context.moveTo( sword.x, sword.y );
-                            context.lineTo( sword.x2, sword.y2 );
-                            context.stroke();
-                            */
-      }
-    }
-  };
-  return entityMethods;
-}(libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_collision, libs_game_functionalStuff_controller);
-libs_game_entities_background = function (entityMethods) {
-  var Background = function (options) {
+libs_gamestrut_entities_entity = function (box2d, key, Collision, Controller) {
+  var Entity = function (options) {
     // ADD ALL OPTIONS
     for (var key in options) {
       this[key] = options[key];
@@ -9951,165 +9625,8 @@ libs_game_entities_background = function (entityMethods) {
         this[key] = this[key].bind(this);
       }
     }
-    // SET DEFAULT OPTIONS
-    this.type = 'Background';
-    this.texture = options.texture;
-    this.color = options.color || 'black';
-    this.x = options.x || 0;
-    this.y = options.y || 0;
-    this.width = typeof this.texture != 'undefined' ? this.texture.width : 0;
-    this.height = typeof this.texture != 'undefined' ? this.texture.height : 0;
-    // ADD ALL entityMethods FUNCTIONS
-    for (var key in entityMethods) {
-      var func = entityMethods[key];
-      this[key] = func.bind(this);
-    }
-    // INITIALIZE STUFF
-    // COLLISIONS
-    this.initCollisions();
-    // CONTROLLERS
-    this.initControllers();
-  };
-  return Background;
-}(libs_game_entities_entityMethods);
-libs_game_entities_textEntity = function (entityMethods) {
-  var TextEntity = function (options) {
-    // ADD ALL OPTIONS
-    for (var key in options) {
-      this[key] = options[key];
-      // BIND FUNCTIONS TO this OBJECT
-      if (typeof this[key] == 'function') {
-        this[key] = this[key].bind(this);
-      }
-    }
-    // SETTING DEFAULT OPTIONS
-    this.type = 'Text';
-    this.x = this.x || 0;
-    this.y = this.y || 0;
-    this.fontSize = this.fontSize || 20;
-    this.fontColor = this.fontColor || 'black';
-    this.fontFamily = this.fontFamily || 'Arial';
-    // ADD ALL entityMethods FUNCTIONS
-    for (var key in entityMethods) {
-      var func = entityMethods[key];
-      this[key] = func.bind(this);
-    }
-    // INITIALIZE STUFF
-    // COLLISIONS
-    this.initCollisions();
-    // CONTROLLERS
-    this.initControllers();
-  };
-  return TextEntity;
-}(libs_game_entities_entityMethods);
-libs_game_entities_animateEntity = function (Mousetrap, Key, Controller, Collision, box2d, entityMethods, Level) {
-  /**
-  	* Animate Entity Object 
-  	*
-  	* Represents an entity in a 'level'.
-  	*
-  	* @type {object} 
-  */
-  var AnimateEntity = function (options) {
-    // ADD ALL OPTIONS
-    for (var key in options) {
-      this[key] = options[key];
-      // BIND FUNCTIONS TO this OBJECT
-      if (typeof this[key] == 'function') {
-        this[key] = this[key].bind(this);
-      }
-    }
-    // GENERAL STUFF
-    this.type = 'AnimateEntity';
-    this.x = this.x || 0;
-    this.y = this.y || 0;
-    this.width = this.width || 0;
-    this.height = this.height || 0;
-    this.level = this.level;
-    // ANIMATION STUFF
-    this.time = new Date().getTime();
-    // TEXTURE STUFF
-    this.textures = {};
-    this.previousTexture = this.texture;
-    this.sx = this.sx || 0;
-    this.sy = this.sy || 0;
-    this.angle = this.angle || 0;
-    this.lookingRight = this.lookingRight || true;
-    this.lookingLeft = this.lookingLeft || false;
-    this.color = this.color || 'green';
-    this.zindex = this.zindex || '0';
-    // SET SCALE
-    this.SCALE = this.scale || 40;
-    // ADD ALL entityMethods FUNCTIONS
-    for (var key in entityMethods) {
-      var func = entityMethods[key];
-      this[key] = func.bind(this);
-    }
-    // INITIALIZE STUFF
-    // COLLISIONS
-    this.initCollisions();
-    // CONTROLLERS
-    this.initControllers();
-    // PHYSICS
-    if (typeof this.level != 'undefined') {
-      this.initPhysics();
-    }
-  };
-  /**
-  	* Sets up the entity for box2D
-  	* physics.
-  	*
-  	* @return {undefined}
-  */
-  AnimateEntity.prototype.initPhysics = function () {
-    /* Physics Stuff */
-    var fixDef = new box2d.b2FixtureDef();
-    fixDef.density = this.density || 1;
-    fixDef.restitution = this.restitution || 0;
-    fixDef.friction = this.friction || 0.5;
-    var bodyDef = new box2d.b2BodyDef();
-    bodyDef.type = box2d.b2Body.b2_dynamicBody;
-    bodyDef.position.x = (this.x + this.width / 2) / this.SCALE;
-    bodyDef.position.y = (this.y + this.height / 2) / this.SCALE;
-    bodyDef.angle = this.angle;
-    fixDef.shape = new box2d.b2PolygonShape();
-    // sets type of shape
-    fixDef.shape.SetAsBox(this.width / this.SCALE / 2, this.height / this.SCALE / 2);
-    // sets width & height
-    this.body = this.level.world.CreateBody(bodyDef);
-    this.body.SetUserData(this);
-    this.body.CreateFixture(fixDef);  // adds the defined body to the defined world.
-  };
-  return AnimateEntity;
-}(Mousetrap, libs_game_functionalStuff_key, libs_game_functionalStuff_controller, libs_game_functionalStuff_collision, libs_game_functionalStuff_box2dvariables, libs_game_entities_entityMethods, libs_game_entities_level);
-libs_game_entities_block = function (box2d, entityMethods, Level) {
-  /**
-  	 * A block object. Basically an entity
-  	 * that isn't animated in terms of physics 
-  	 * but still collides. It will collide
-  	 * with other objects, but will not react
-  	 * to any of the physics. 
-  	 *
-  	 * i.e. if an AnimateEntity hits a Block,
-  	 * the Block will not move and neither
-  	 * will it under the force of gravity. BUT
-  	 * it will interact physically with the 
-  	 * AnimateEntity.
-  	 *
-  	 * @param {object} options A JSON object containing all the options for the Block object.
-  */
-  var Block = function (options) {
-    // ADD ALL OPTIONS
-    for (var key in options) {
-      this[key] = options[key];
-      // BIND FUNCTIONS TO this OBJECT
-      if (typeof this[key] == 'function') {
-        this[key] = this[key].bind(this);
-      }
-    }
-    // SET PROPERTIES
+    // SET DEFAULTS
     this.id = this.id;
-    this.type = 'Block';
     this.x = this.x || 0;
     this.y = this.y || 0;
     this.width = this.width || 40;
@@ -10126,36 +9643,48 @@ libs_game_entities_block = function (box2d, entityMethods, Level) {
     this.zindex = this.zindex || '0';
     // SET SCALE
     this.SCALE = this.SCALE || 40;
-    // ADD entityMethod FUNCTIONS
-    for (var key in entityMethods) {
-      var func = entityMethods[key];
-      this[key] = func.bind(this);
-    }
+  };
+  /**
+  * Initialize certain properties
+  * that require the general properties to
+  * be set. e.g. collisions and controllers
+  * require a list of collision and 
+  * controller listeners to be set previously.
+  *
+  * @return undefined
+  */
+  Entity.prototype.init = function () {
     // INITIALIZE STUFF
-    // COLLISIONS
+    // collision
     this.initCollisions();
-    // PHYSICS
-    if (typeof this.level != 'undefined') {
+    // controllers 
+    this.initControllers();
+    // physics
+    if ((this.type == 'AnimateEntity' || this.type == 'Block') && typeof this.level != 'undefined') {
       this.initPhysics();
     }
   };
   /**
-  	 * Initializes all the physics properties of
-  	 * the object.
-  	 * This essentially adds the object to the box2d
-  	 * physics engine.
-  	 *
-  	 * @return {undefined}
+  * Initializes all the physics properties of
+  * the object.
+  * This essentially adds the object to the box2d
+  * physics engine.
+  *
+  * @return {undefined}
   */
-  Block.prototype.initPhysics = function () {
-    // Physics based info
+  Entity.prototype.initPhysics = function () {
+    // SET BODY TYPE BASED ON ENTITY TYPE
+    var type = this.type == 'AnimateEntity' ? box2d.b2Body.b2_dynamicBody : box2d.b2Body.b2_staticBody;
+    /* Physics Stuff */
     var fixDef = new box2d.b2FixtureDef();
-    fixDef.density = 1;
-    fixDef.friction = 0.5;
+    fixDef.density = this.density || 1;
+    fixDef.restitution = this.restitution || 0;
+    fixDef.friction = this.friction || 0.5;
     var bodyDef = new box2d.b2BodyDef();
-    bodyDef.type = box2d.b2Body.b2_staticBody;
+    bodyDef.type = type;
     bodyDef.position.x = (this.x + this.width / 2) / this.SCALE;
     bodyDef.position.y = (this.y + this.height / 2) / this.SCALE;
+    bodyDef.angle = this.angle;
     fixDef.shape = new box2d.b2PolygonShape();
     // sets type of shape
     fixDef.shape.SetAsBox(this.width / this.SCALE / 2, this.height / this.SCALE / 2);
@@ -10164,9 +9693,381 @@ libs_game_entities_block = function (box2d, entityMethods, Level) {
     this.body.SetUserData(this);
     this.body.CreateFixture(fixDef);  // adds the defined body to the defined world.
   };
+  /**
+  * Sets an attibute to the animate entity.
+  *
+  * If attibute is a function, it is 
+  * nested within a wrapper function that 
+  * allows the executed function to refer to
+  * 'this' as the animate entity.
+  *  
+  * @param {string} key String representing the key of the attribute.
+  * @param {any} key Any data type to be set under the key.
+  * @return {undefined}
+  */
+  Entity.prototype.set = function (key, attribute) {
+    // CHECK THAT attribute ISN'T UNDEFINED
+    if (typeof attribute == 'undefined') {
+      // ERROR OUTPUT
+      console.log('cannot set undefined to level. ' + key + ' is undefined.');
+      return;
+    }
+    // IF attribute IS FUNCTION
+    if (typeof attribute == 'function') {
+      // ADD FUNCTION TO LEVEL WITH A WRAPPER THAT BINDS 'this' 
+      // TO THE FUNCTIONS SCOPRE AS ITS PARAMETER
+      this[key] = attribute.bind(this);
+    } else {
+      // SET attribute UNDER key
+      this[key] = attribute;
+    }
+  };
+  /**
+  * Returns the position of the given entity.
+  *
+  * x and y coordinates are translated into the canvas' scale.
+  *
+  * x and y coordinates are centered to the entity.
+  * 
+  * @return {object}     An object holding the translated coordinates of the given entity.
+  */
+  Entity.prototype.getPosition = function () {
+    // GET POSITION FROM BOX2D BODY 
+    var x = this.body.GetPosition().x * this.SCALE;
+    var y = this.body.GetPosition().y * this.SCALE;
+    // RETURN POSITION
+    return {
+      x: x,
+      y: y
+    };
+  };
+  /**
+  * Returns the angle of the given entity in radians.
+  * 
+  * @return {float}     The angle in radians of the given entity.
+  */
+  Entity.prototype.getAngle = function () {
+    return this.body.GetAngle();
+  };
+  /**
+  * Sets the position of the entity.
+  *
+  * x and y are set to box2d body's scale.
+  *
+  * x and y are centered to animateEntity's dimensions.
+  *
+  * @param {object} pos JSON object with x and y coordinate values. Either is optional.
+  *
+  * @return {undefined}
+  */
+  Entity.prototype.setPosition = function (pos) {
+    // IF POS IS DEFINED
+    if (typeof pos != 'undefined') {
+      this.body.SetAwake(true);
+      // GET X AND Y POSITIONS
+      var x = pos.x || this.getPosition().x;
+      var y = pos.y || this.getPosition().y;
+      // SET X AND Y POSITIONS TO SCALE FOR PHYSICS ENGINE
+      x = x / this.SCALE;
+      y = y / this.SCALE;
+      // ADD X AND Y TO VECTOR OBJECT
+      pos = new box2d.b2Vec2(x, y);
+      // SET THE BOX2D BODY POSITION
+      this.body.SetPosition(pos);
+    }
+  };
+  /**
+  * Sets angle of object's box2d boxy.
+  *
+  * @param {number} angle Number representing degrees in Radian.
+  * @return {undefined}
+  */
+  Entity.prototype.setAngle = function (angle) {
+    // WAKE UP BODY
+    this.body.SetAwake(true);
+    // RESET ANGULAR PHYSICS
+    this.body.SetAngularVelocity(0);
+    // SET ANGLE
+    this.body.SetAngle(angle);
+  };
+  /**
+  * Sets the angular velocity of 
+  * the object's box2d body.
+  *
+  * @param {number} angle Number representing degrees in Radian.
+  * @return {undefined}
+  */
+  Entity.prototype.setAngularVelocity = function (angle) {
+    // WAKE UP BODY
+    this.body.SetAwake(true);
+    // SET ANGULAR VELOCITY
+    this.body.SetAngularVelocity(angle);
+  };
+  /**
+  * Sets linear velocity of object's box2d body.
+  *
+  * @param {object} vals Object holding x and y values.
+  * @return {undefined}
+  */
+  Entity.prototype.setLinearVelocity = function (vals) {
+    // WAKE UP BODY
+    this.body.SetAwake(true);
+    // SET LINEAR VELOCITY 
+    this.body.GetLinearVelocity().x = vals.x || this.body.GetLinearVelocity().x;
+    this.body.GetLinearVelocity().y = vals.y || this.body.GetLinearVelocity().y;
+  };
+  /**
+  * Adds a texture to the texture array.
+  *
+  * @param {string} textureID  The ID of the texture e.g. 'running'.
+  * @param {string} textureURL The URL of the texture e.g. 'images/player.png'.
+  */
+  Entity.prototype.addTexture = function (textureID, textureURL) {
+    var image = new Image();
+    image.src = textureURL;
+    this.textures[textureID] = image;
+  };
+  /**
+  * Sets the current texture.
+  *
+  * @param {string} textureID The ID of the texture e.g. 'running'.
+  */
+  Entity.prototype.setTexture = function (textureID) {
+    if (typeof this.texture != 'undefined') {
+      this.texture = this.textures[textureID];
+    } else {
+      this.texture = this.textures[textureID];
+      this.previousTexture = this.texture;
+    }
+  };
+  /**
+  * Set level of an entity.
+  * Initialize physics of entity if it has the function.
+  *
+  * @return {undefined}
+  */
+  Entity.prototype.setLevel = function (level) {
+    // ADD LEVEL IF IT'S DEFINED AND OF TYPE 'level'
+    if (typeof level != 'undefined' && level.type == 'Level') {
+      this.level = level;
+      if (typeof this.initPhysics == 'undefined')
+        return;
+      this.initPhysics();
+    } else {
+      // ERROR OUTPUT
+      console.log(level);
+      console.log('could not set above ' + level + ' as level.');
+    }
+  };
+  /**
+  * Initialize the controller listeners.
+  *
+  * @return undefined
+  */
+  Entity.prototype.initControllers = function () {
+    // SET UP CONTROLLERS
+    for (var controllerIndex in this.controllers) {
+      // GET CONTROLLER
+      var controller = this.controllers[controllerIndex];
+      // SET CONTROLLER VALUES
+      var event = controller.event;
+      var key = controller.key;
+      var preventDefault = controller.preventDefault;
+      var oneTimePress = controller.oneTimePress;
+      var execute = controller.execute;
+      // SET EXECUTE TO FUNCTION IN OBJECT
+      // OR BIND THE NEW FUNCTION TO THE OBJECT
+      execute = typeof execute == 'string' && typeof this[execute] != 'undefined' ? this[execute] : execute.bind(this);
+      // CREATE CONTROLLER
+      this.controllers[controllerIndex] = new Controller(key, execute, event, oneTimePress, preventDefault);
+    }
+  };
+  /**
+  * Initializes all collision listeners for the animate entity.
+  *
+  * @return {undefined}
+  */
+  Entity.prototype.initCollisions = function () {
+    this.collisions = this.collisions || [];
+    // FOR EACH CONTROLLER OF THIS ANIMATE ENTITY
+    for (var eventString in this.collisions) {
+      var i = i || 0;
+      var tempArray = tempArray || [];
+      var event = this.collisions[eventString];
+      for (var objBId in event) {
+        // GET EXECUTE
+        var execute = event[objBId];
+        // SET EXECUTE EITHER AS FUNCTION OF this OR CLOSURE
+        execute = typeof execute == 'string' ? this[execute] : execute.bind(this);
+        // CREATE COLLISION FUNCTION
+        tempArray[i] = new Collision(eventString, this.id, objBId, execute);
+        i++;
+      }
+    }
+    // SET COLLISIONS
+    this.collisions = tempArray || [];
+  };
+  /* painter's algorithm:
+  * the sword, shield, and body are drawn in an order
+  * depending on the direction the animateEntity is 
+  * facing.
+  */
+  Entity.prototype.draw = function (context) {
+    // DRAW FOR ANIMATE ENTITY
+    if (this.type == 'AnimateEntity' && !this.dead) {
+      this.drawBody(context);
+    }
+    // DRAW FOR BLOCK
+    if (this.type == 'Block') {
+      this.drawBody(context);
+    }
+    // DRAW FOR BACKGROUND
+    if (this.type == 'Background') {
+      this.drawBody(context);
+    }
+    // DRAW FOR TEXT
+    if (this.type == 'Text') {
+      this.drawBody(context);
+    }
+  };
+  Entity.prototype.drawBody = function (context) {
+    // DRAW TEXT IF TEXT ENTITY
+    if (this.type == 'Text') {
+      // DRAW TEXT
+      context.font = this.fontSize + 'px ' + this.fontFamily;
+      context.fillStyle = this.fontColor;
+      context.fillText(this.text, this.x, this.y);
+      return;
+    }
+    // DRAW BACKGORUND IF BACKGROUND ENTITY
+    if (this.type == 'Background') {
+      // DRAW BACKGROUND
+      if (typeof this.texture != 'undefined') {
+        var image = new Image();
+        image.src = this.texture;
+        // DRAW TEXTURE
+        context.drawImage(image, this.x, this.y);
+      } else {
+        // DRAW COLOR
+        context.fillStyle = this.color;
+        context.fillStyle = 'yellow';
+        context.fillRect(this.x, this.y, context.canvas.width, context.canvas.height);
+      }
+      return;
+    }
+    // CONTINUE FOR DRAWING ANIMATE ENTITY OR BLOCK ENTITY
+    this.x = this.body.GetPosition().x * this.SCALE - this.width / 2;
+    this.y = this.body.GetPosition().y * this.SCALE - this.height / 2;
+    this.angle = this.body.GetAngle();
+    if (this.texture && (this.sx >= this.texture.naturalWidth || this.previousTexture.src != this.texture.src)) {
+      this.sx = 0;
+    }
+    context.save();
+    // DRAW SHADOW
+    context.shadowBlur = 10;
+    context.shadowColor = 'black';
+    context.translate(this.x + this.width / 2, this.y + this.height / 2);
+    context.rotate(this.angle);
+    context.translate(-(this.x + this.width / 2), -(this.y + this.height / 2));
+    // DRAW ENTITY
+    if (typeof this.texture != 'undefined') {
+      // DRAW TEXTURE
+      context.drawImage(this.texture, this.sx, this.sy, this.width, this.height, this.x, this.y, this.width, this.height);
+    } else {
+      // DRAW COLOR
+      context.fillStyle = this.color;
+      context.fillRect(this.x, this.y, this.width, this.height);
+    }
+    context.rotate(-this.angle);
+    context.restore();
+    var timeDif = new Date().getTime() - this.time;
+    if (this.texture && timeDif >= 400) {
+      this.sx = this.sx + this.width;
+      this.time = new Date().getTime();
+    }
+    this.previousTexture = this.texture;
+  };
+  return Entity;
+}(libs_gamestrut_functionalStuff_box2dvariables, libs_gamestrut_functionalStuff_key, libs_gamestrut_functionalStuff_collision, libs_gamestrut_functionalStuff_controller);
+libs_gamestrut_entities_background = function (Entity) {
+  var Background = function (options) {
+    Entity.call(this, options);
+    // SET DEFAULT OPTIONS
+    this.type = 'Background';
+    this.width = typeof this.texture != 'undefined' ? this.texture.width : 0;
+    this.height = typeof this.texture != 'undefined' ? this.texture.height : 0;
+    this.init();
+  };
+  Background.prototype = Object.create(Entity.prototype);
+  Background.prototype.constructor = Background;
+  return Background;
+}(libs_gamestrut_entities_entity);
+libs_gamestrut_entities_textEntity = function (Entity) {
+  var TextEntity = function (options) {
+    Entity.call(this, options);
+    // SETTING DEFAULT OPTIONS
+    this.type = 'Text';
+    this.fontSize = this.fontSize || 20;
+    this.fontColor = this.fontColor || 'black';
+    this.fontFamily = this.fontFamily || 'Arial';
+    console.log(this);
+    this.init();
+  };
+  TextEntity.prototype = Object.create(Entity.prototype);
+  TextEntity.constructor = TextEntity;
+  return TextEntity;
+}(libs_gamestrut_entities_entity);
+libs_gamestrut_entities_animateEntity = function (Mousetrap, Key, Controller, Collision, box2d, Entity, Level) {
+  /**
+  * Animate Entity Object 
+  *
+  * Represents an entity in a 'level'.
+  *
+  * @type object
+  */
+  var AnimateEntity = function (options) {
+    Entity.call(this, options);
+    // GENERAL STUFF
+    this.type = 'AnimateEntity';
+    // ANIMATION STUFF
+    this.time = new Date().getTime();
+    console.log(this);
+    this.init();
+  };
+  // SET PROTOTYPE INHERITENCE
+  AnimateEntity.prototype = Object.create(Entity.prototype);
+  // SET CONSTRUCTOR OF ANIMATE ENTIY PROTOTYPE
+  AnimateEntity.prototype.constructor = AnimateEntity;
+  return AnimateEntity;
+}(Mousetrap, libs_gamestrut_functionalStuff_key, libs_gamestrut_functionalStuff_controller, libs_gamestrut_functionalStuff_collision, libs_gamestrut_functionalStuff_box2dvariables, libs_gamestrut_entities_entity, libs_gamestrut_entities_level);
+libs_gamestrut_entities_block = function (box2d, Entity, Level) {
+  /**
+  * A block object. Basically an entity
+  * that isn't animated in terms of physics 
+  * but still collides. It will collide
+  * with other objects, but will not react
+  * to any of the physics. 
+  *
+  * i.e. if an AnimateEntity hits a Block,
+  * the Block will not move and neither
+  * will it under the force of gravity. BUT
+  * it will interact physically with the 
+  * AnimateEntity.
+  *
+  * @param {object} options A JSON object containing all the options for the Block object.
+  */
+  var Block = function (options) {
+    Entity.call(this, options);
+    // SET PROPERTIES
+    this.type = 'Block';
+    console.log(this);
+    this.init();
+  };
+  Block.prototype = Object.create(Entity.prototype);
+  Block.prototype.constructor = Block;
   return Block;
-}(libs_game_functionalStuff_box2dvariables, libs_game_entities_entityMethods, libs_game_entities_level);
-game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, entityMethods, AnimateEntity) {
+}(libs_gamestrut_functionalStuff_box2dvariables, libs_gamestrut_entities_entity, libs_gamestrut_entities_level);
+game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, Entity, AnimateEntity) {
   var Game = function (options) {
     // CHECK canvasID
     if (typeof options.canvasID == 'undefined') {
@@ -10211,13 +10112,6 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     }
     // START GAME LOOP
     var intervalId = setInterval(run(), 0);
-    /* ESC */
-    /*Mousetrap.bind('esc',function(){key.onKeydown(key.ESC);},'keydown');*/
-    /*Mousetrap.bind('esc',function(){key.onKeyUp(key.ESC);},'keyup');*/
-    /**/
-    /* No Key Pressed */
-    /*Mousetrap.bind('none',function(){key.onKeydown(key.NONE);},'keydown');*/
-    /*Mousetrap.bind('none',function(){key.onKeyUp(key.NONE);},'keyup');*/
     /* RUN */
     function run() {
       var fps = 45;
@@ -10374,17 +10268,17 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     }
   };
   /**
-  	 * Pauses the Game object's physics engine.
-  	 *
-  	 * @return {undefined}
+  * Pauses the Game object's physics engine.
+  *
+  * @return {undefined}
   */
   Game.prototype.pausePhysics = function () {
     this.timeStep = 0;
   };
   /**
-  	 * Resumes the Game object's physics engine.
-  	 *
-  	 * @return {undefined}
+  * Resumes the Game object's physics engine.
+  *
+  * @return {undefined}
   */
   Game.prototype.resumePhysics = function () {
     this.timeStep = 1 / 45;
@@ -10397,8 +10291,8 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     this.canvas.width = this.canvas.width;
   };
   /**
-  	 * Gets the width of the canvas.
-  	 * @return {float} The width of the canvas.
+  * Gets the width of the canvas.
+  * @return {float} The width of the canvas.
   */
   Game.prototype.getCanvasWidth = function () {
     return this.canvas.width;
@@ -10411,12 +10305,12 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     return this.canvas.height;
   };
   /**
-  	* Obtains and returnes the mouse coordinates
-  	* relative to the canvas element.
-  	*
-  	* @param {Event} event A jQuery Event Object.
-  	* @return {Object} An object holding x and y coordinates.
-  	*/
+  * Obtains and returnes the mouse coordinates
+  * relative to the canvas element.
+  *
+  * @param {Event} event A jQuery Event Object.
+  * @return {Object} An object holding x and y coordinates.
+  */
   Game.prototype.getMousePos = function (event) {
     var rect = canvas.getBoundingClientRect();
     return {
@@ -10425,16 +10319,16 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     };
   };
   /**
-  	* Sets the canvas width.
-  	* @param {float} width The width of the canvas.
-  	*/
+  * Sets the canvas width.
+  * @param {float} width The width of the canvas.
+  */
   Game.prototype.setCanvasWidth = function (width) {
     this.canvas.width = width;
   };
   /**
-  	* Sets the canvas height.
-  	* @param {float} height The height of the canvas.
-  	*/
+  * Sets the canvas height.
+  * @param {float} height The height of the canvas.
+  */
   Game.prototype.setCanvasHeight = function (height) {
     this.canvas.height = height;
   };
@@ -10476,15 +10370,15 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     }
   };
   /**
-  	* Adds a Level object to the levels array
-  	* @param {object} lvl A Level object.
+  * Adds a Level object to the levels array
+  * @param {object} lvl A Level object.
   */
   Game.prototype.addLevel = function (lvl) {
     this.levels[lvl.id] = lvl;
   };
   /**
-  	* Sets the current level of the game
-  	* @param {number} lvlID [description]
+  * Sets the current level of the game
+  * @param {number} lvlID [description]
   */
   Game.prototype.setCurrentLevel = function (lvlID) {
     this.current_level = levels[lvlID];
@@ -10498,88 +10392,88 @@ game = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntit
     controllers.push(new Controller(keys, method, isPressed));
   };
   /**
-  	* Adds a given function to the logics array.
-  	* This is so users can add custom game logic.
-  	*
-  	* e.g. an entity shall be respawned on the other side of the screen
-  	*  when at the edge of the screen.
-  	*  Or when the user feels particularly sadistic, an entity
-  	*  shall die at a random moment in time. :P
-  	*  
-  	* @param {function} func The function that shall be executed.
+  * Adds a given function to the logics array.
+  * This is so users can add custom game logic.
+  *
+  * e.g. an entity shall be respawned on the other side of the screen
+  *  when at the edge of the screen.
+  *  Or when the user feels particularly sadistic, an entity
+  *  shall die at a random moment in time. :P
+  *  
+  * @param {function} func The function that shall be executed.
   */
   Game.prototype.addLogic = function (func) {
     logics.push(func);
   };
   return Game;
-}(Mousetrap, libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_controller, libs_game_entities_level, libs_game_entities_background, libs_game_entities_textEntity, libs_game_entities_entityMethods, libs_game_entities_animateEntity);
-libs_game_gamestrutjs = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, entityMethods, AnimateEntity, Block, Game) {
+}(Mousetrap, libs_gamestrut_functionalStuff_box2dvariables, libs_gamestrut_functionalStuff_key, libs_gamestrut_functionalStuff_controller, libs_gamestrut_entities_level, libs_gamestrut_entities_background, libs_gamestrut_entities_textEntity, libs_gamestrut_entities_entity, libs_gamestrut_entities_animateEntity);
+libs_gamestrut_gamestrutjs = function (Mousetrap, box2d, key, Controller, Level, Background, TextEntity, Entity, AnimateEntity, Block, Game) {
   /*! 
-  	* GameStrut, Version 2.0!
-  	* @author Daniel Stuessy
-  	* @description An html5 canvas video game framework.
-  	*
-  	* This work of Daniel Stuessy uses the libraries 
-  	* Mousetrap.js and Box2dWeb.js. 
-  	* They are used to provide a video game framework 
-  	* that developers can use to save development time. 
-  	* 
-  	* Hopefully this will be of use to someone. :)
-  	*
-  	*
-  	*
-  	* The MIT License (MIT)
-  	*
-  	* Copyright (c) 2015 Daniel Stuessy
-  	*
-  	* Permission is hereby granted, free of charge, to any person obtaining a copy
-  	* of this software and associated documentation files (the "Software"), to deal
-  	* in the Software without restriction, including without limitation the rights
-  	* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  	* copies of the Software, and to permit persons to whom the Software is
-  	* furnished to do so, subject to the following conditions:
-  	*
-  	* The above copyright notice and this permission notice shall be included in
-  	* all copies or substantial portions of the Software.
-  	*
-  	* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  	* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  	* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  	* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  	* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  	* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-  	* THE SOFTWARE.
+  * GameStrut, Version 2.0!
+  * @author Daniel Stuessy
+  * @description An html5 canvas video game framework.
+  *
+  * This work of Daniel Stuessy uses the libraries 
+  * Mousetrap.js and Box2dWeb.js. 
+  * They are used to provide a video game framework 
+  * that developers can use to save development time. 
+  * 
+  * Hopefully this will be of use to someone. :)
+  *
+  *
+  *
+  * The MIT License (MIT)
+  *
+  * Copyright (c) 2015 Daniel Stuessy
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy
+  * of this software and associated documentation files (the "Software"), to deal
+  * in the Software without restriction, including without limitation the rights
+  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  * copies of the Software, and to permit persons to whom the Software is
+  * furnished to do so, subject to the following conditions:
+  *
+  * The above copyright notice and this permission notice shall be included in
+  * all copies or substantial portions of the Software.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  * THE SOFTWARE.
   */
   window.GameStrut = {
     /**
-    		 * A Game class,
-    		 * @type {Game}
-    */
+     * A Game class,
+     * @type {Game}
+     */
     Game: Game,
     /**
-    		* A Level class,
-    		* @type {Level}
-    */
+     * A Level class,
+     * @type {Level}
+     */
     Level: Level,
     /**
-    		* A Background class.
-    		* @type {Background}
-    */
+     * A Background class.
+     * @type {Background}
+     */
     Background: Background,
     /**
-    		* A TextEntity class.
-    		* @type {TextEntity}
-    */
+     * A TextEntity class.
+     * @type {TextEntity}
+     */
     TextEntity: TextEntity,
     /**
-    		* Mixin of functions for all AnimateEntities.
-    		* @type {Object}
-    */
-    entityMethods: entityMethods,
+     * Mixin of functions for all AnimateEntities.
+     * @type {Object}
+     */
+    Entity: Entity,
     /**
-    		* An AnimateEntity class.
-    		* @type {AnimateEntity}
-    */
+     * An AnimateEntity class.
+     * @type {AnimateEntity}
+     */
     AnimateEntity: AnimateEntity,
     /** 
      * A Block class.
@@ -10587,17 +10481,17 @@ libs_game_gamestrutjs = function (Mousetrap, box2d, key, Controller, Level, Back
      */
     Block: Block,
     /**
-    		* Holds and manages all the key codes pressed.
-    		* @type {Object}
-    */
+     * Holds and manages all the key codes pressed.
+     * @type {Object}
+     */
     Key: key,
     /**
-    		* box2d variable
-    		* Holds all the classes used from box2d
-    		* @type {Box2d}
-    */
+     * box2d variable
+     * Holds all the classes used from box2d
+     * @type {Box2d}
+     */
     box2d: box2d
   };
   return GameStrut;
-}(Mousetrap, libs_game_functionalStuff_box2dvariables, libs_game_functionalStuff_key, libs_game_functionalStuff_controller, libs_game_entities_level, libs_game_entities_background, libs_game_entities_textEntity, libs_game_entities_entityMethods, libs_game_entities_animateEntity, libs_game_entities_block, game);
+}(Mousetrap, libs_gamestrut_functionalStuff_box2dvariables, libs_gamestrut_functionalStuff_key, libs_gamestrut_functionalStuff_controller, libs_gamestrut_entities_level, libs_gamestrut_entities_background, libs_gamestrut_entities_textEntity, libs_gamestrut_entities_entity, libs_gamestrut_entities_animateEntity, libs_gamestrut_entities_block, game);
 }());
