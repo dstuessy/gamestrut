@@ -60,11 +60,13 @@ define([
 		this.initCollisions();
 		// controllers 
 		this.initControllers();
+		console.log( this.type );
 		// physics
 		switch (this.type) {
 			case 'AnimateEntity':
 			case 'StaticEntity':
 				if (typeof this.level !== 'undefined') {
+					console.log(' initializing physics ');
 					this.initPhysics();
 				}
 				break;
@@ -135,6 +137,12 @@ define([
 			// SET attribute UNDER key
 			this[key] = attribute;
 		}
+	};
+
+	Entity.prototype.setFriction = function ( attribute ) {
+		console.log( this.body.GetFixtureList() );
+		this.body.GetFixtureList().SetFriction( attribute );
+		//this.body.SetFriction( attribute );
 	};
 
 	/**
@@ -366,33 +374,89 @@ define([
 		this.collisions = tempArray || [];
 	};
 
-	/* painter's algorithm:
+	/** painter's algorithm:
 	 * the sword, shield, and body are drawn in an order
 	 * depending on the direction the animateEntity is 
 	 * facing.
+	 *
+	 * @return undefined
 	 */
 	Entity.prototype.draw = function (context) {
 
-		// DRAW FOR ANIMATE ENTITY
-		if (this.type == 'AnimateEntity' && !this.dead) {
+		context.save();
 
-			this.drawBody(context);
+		switch (this.type) {
+			case 'Background':
+			case 'StaticEntity':
+			case 'AnimateEntity':
+				// BREAK SWITCH IF ENTITY IS DEAD
+				if ( this.dead ) break;
+			default:
+
+				// UPDATE PROPERTIES
+				this.x = (this.body.GetPosition().x * this.SCALE) - this.width/2;
+				this.y = (this.body.GetPosition().y * this.SCALE) - this.height/2;
+				this.angle = this.body.GetAngle();
+
+				// DRAW SHADOW
+				context.shadowBlur = 10;
+				context.shadowColor = "black";
+				context.translate( this.x + (this.width/2), this.y + (this.height/2) );
+				context.rotate( this.angle );
+				context.translate( -( this.x + (this.width/2) ), -( this.y + (this.height/2) ) );
+
+				// SET FONT COLOR
+				if (typeof this.fontColor != 'undefined') context.fillStyle = this.fontColor; 
+
+				// SET FONT FAMILY AND SIZE
+				if (
+					typeof this.fontFamily != 'undefined' 
+					&& 
+					typeof this.fontColor != 'undefined' 
+				) context.font = this.fontSize + 'px ' + this.fontFamily;
+
+				// SET COLOR
+				if (typeof this.color != 'undefined') context.fillStyle = this.color; 
+
+
+				// DRAW ENTITY
+				// DRAW TEXTURE
+				if (typeof this.texture != 'undefined') context.drawImage( 
+														  this.texture, 
+														  this.sx, 
+														  this.sy, 
+														  this.width, 
+														  this.height, 
+														  this.x, 
+														  this.y, 
+														  this.width, 
+														  this.height 
+														 );
+				// DRAW COLOR
+				if (typeof this.color != 'undefined')  context.fillRect(
+															this.x, 
+															this.y,
+															this.width,
+															this.height
+														);
+				// DRAW TEXT
+				if (
+					typeof this.fontColor != 'undefined' 
+					&& 
+					typeof this.fontFamily != 'undefined'
+					&&
+					typeof this.fontSize != 'undefined'
+					&&
+					typeof this.text != 'undefined'
+				) {
+					context.fillText( this.text, this.x, this.y );
+				}
+				
+				// ROTATE ENTITY
+				context.rotate( -(this.angle || 0) );
 		}
 
-		// DRAW FOR StaticEntity
-		if (this.type == 'StaticEntity') {
-			this.drawBody( context );
-		}
-
-		// DRAW FOR BACKGROUND
-		if ( this.type == 'Background' ) {
-			this.drawBody( context );
-		}
-
-		// DRAW FOR TEXT
-		if (this.type == 'Text') {
-			this.drawBody( context );
-		}
+		context.restore();
 	};
 
 	Entity.prototype.drawBody = function (context) {
@@ -421,16 +485,15 @@ define([
 
 				// DRAW TEXTURE
 				context.drawImage( 
-								  image, 
-								  this.x, 
-								  this.y 
-								 );
+				  image, 
+				  this.x, 
+				  this.y 
+				 );
 			} 
 			else {
 
 				// DRAW COLOR
 				context.fillStyle = this.color;
-				context.fillStyle = 'yellow';
 				context.fillRect(
 					this.x, 
 					this.y,
@@ -444,22 +507,9 @@ define([
 
 
 		// CONTINUE FOR DRAWING ANIMATE ENTITY OR STATIC ENTITY
-
 		this.x = (this.body.GetPosition().x * this.SCALE) - this.width/2;
 		this.y = (this.body.GetPosition().y * this.SCALE) - this.height/2;
 		this.angle = this.body.GetAngle();
-
-		if (
-			this.texture
-		&&
-			(
-				this.sx >= this.texture.naturalWidth 
-					|| 
-						this.previousTexture.src != this.texture.src
-		)
-		) {
-			this.sx = 0;
-		}
 
 		context.save();
 		// DRAW SHADOW
@@ -473,16 +523,16 @@ define([
 
 			// DRAW TEXTURE
 			context.drawImage( 
-							  this.texture, 
-							  this.sx, 
-							  this.sy, 
-							  this.width, 
-							  this.height, 
-							  this.x, 
-							  this.y, 
-							  this.width, 
-							  this.height 
-							 );
+			  this.texture, 
+			  this.sx, 
+			  this.sy, 
+			  this.width, 
+			  this.height, 
+			  this.x, 
+			  this.y, 
+			  this.width, 
+			  this.height 
+			 );
 		} 
 		else {
 			// DRAW COLOR
@@ -496,19 +546,6 @@ define([
 		}
 		context.rotate( -this.angle );
 		context.restore();
-
-		var timeDif = new Date().getTime() - this.time;
-
-		if (
-			this.texture
-		&&
-			timeDif >= 400
-		) {
-			this.sx = this.sx + this.width;
-			this.time = new Date().getTime();
-		}
-
-		this.previousTexture = this.texture;
 	};
 
 	return Entity;

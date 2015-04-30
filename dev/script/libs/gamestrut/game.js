@@ -29,7 +29,7 @@ define([
 		this.canvasHeight = options.canvasHeight || 400;
 
 		// SET CANVAS
-		this.canvas = document.getElementById(this.canvasID);
+		this.canvas = document.getElementById( this.canvasID );
 		this.context = canvas.getContext('2d');
 		// SET CANVAS DIMENSIONS
 		this.setCanvasWidth(this.canvasWidth);
@@ -56,13 +56,16 @@ define([
 		// DISABLE RIGHT CLICK ON CANVAS
 		var disableRightClick = options.disableRightClick || false;
 		if (disableRightClick) {
-			$(document).on('contextmenu', function (e) {
-				// IF TARGET IS CANVAS
-				if ($(e.target).is(self.canvasID)) {
+
+			// SET EVENT LISTENER FOR ON RIGHT CLICK
+			document.oncontextmenu = document.body.oncontextmenu = function (e) {
+				
+				if ( e.target == self.canvas ) {
+
 					// RETURN FALSE TO DISABLE RIGHT CLICK
 					return false;
 				}
-			});
+			};
 		}
 
 

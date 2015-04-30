@@ -9,9 +9,13 @@ define([
 		
 		// SETTING DEFAULT OPTIONS
 		this.type = 'Text';
+		this.text = this.text || '';
 		this.fontSize = this.fontSize || 20;
 		this.fontColor = this.fontColor || 'black';
 		this.fontFamily = this.fontFamily || 'Arial';
+		this.color = undefined;
+		this.width = 0;
+		this.height = 0;
 
 		this.init();
 	};

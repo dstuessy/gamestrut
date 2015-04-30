@@ -2,7 +2,7 @@
 require.config({
 	baseUrl: 'script/',
 	paths: {
-		jquery: 'libs/jquery',
+		//jquery: 'libs/jquery',
 		Mousetrap: 'libs/mousetrap',
 		box2dweb: 'libs/box2dweb.min',
 		game: 'libs/gamestrut/game',

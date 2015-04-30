@@ -3,11 +3,11 @@
  * @version  0.2
  * @author  Daniel Stuessy
 */
-define(['jquery', 'gamestrut'], function ($, GameStrut) {
+define(['gamestrut'], function (GameStrut) {
 
 	var run = function () {
 		// on DOM ready
-		$(function () {
+		//$(function () {
 
 			var canvasWidth = 1000;
 			var canvasHeight = 600;
@@ -25,6 +25,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						zindex: '1',
 						friction: 1,
 						density: 1,
+						restitution: 0,
 						moveVelocity: 12,
 						jumpPower: 25,
 						// MOVES PLAYER TO THE RIGHT
@@ -87,6 +88,10 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 								this.jumpCount++;
 							}
 						},
+						touchWalls: function () {
+
+							this.setFriction( 0 );
+						},
 						// WHEN JUMP BUTTON IS RELEASED
 						jumpRelease: function () {
 							// DEFINED IN jump FOR THE FIRST TIME
@@ -95,6 +100,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 						},
 						// WHEN JUMP NEEDS TO BE RESET -- for double jump
 						jumpReset: function () {
+							this.setFriction( 0.5 );
 							this.jumpCount = undefined;
 						},
 						save: function () {
@@ -139,8 +145,8 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 								'block_test': 'jumpReset',
 								'block_test_2': 'jumpReset',
 								'block_ceiling': 'jumpReset',
-								'block_left_wall': 'jumpReset',
-								'block_right_wall': 'jumpReset',
+								'block_left_wall': 'touchWalls',
+								'block_right_wall': 'touchWalls',
 								'animate_entity_test_2': 'jumpReset',
 								'animate_entity_test_3': 'jumpReset',
 								'block_floor': 'jumpReset'
@@ -251,7 +257,7 @@ define(['jquery', 'gamestrut'], function ($, GameStrut) {
 			});
 
 			console.log(game);
-		});
+		//});
 	};
 
 	return run;
