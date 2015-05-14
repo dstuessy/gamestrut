@@ -17,10 +17,6 @@ gamestrut.js
 
 
 ==============
-### Requirements
-**Currently requires jQuery**
-
-==============
 ### Source Files
 
 **Production**: in the 'build/' directory.
