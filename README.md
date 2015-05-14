@@ -3,7 +3,7 @@ gamestrut.js
 
 ### Todo list:
 
-* Remove jQuery requirement.
+* &#10004; Remove jQuery requirement.
 * Level scrolling i.e. scroll level horizontally/vertically when character is at edge of canvas
 * &#10004; "z-indexed" entities.
 * Make background zoomable.

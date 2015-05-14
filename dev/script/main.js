@@ -159,6 +159,7 @@ define(['gamestrut'], function (GameStrut) {
 					height: 100,
 					color: 'blue',
 					zindex: '1',
+					restitution: 0,
 					density: 1
 				}),
 				new GameStrut.AnimateEntity({
@@ -168,6 +169,7 @@ define(['gamestrut'], function (GameStrut) {
 					width: 20,
 					height: 20,
 					color: 'yellow',
+					restitution: 0,
 					zindex: '1'
 				}),
 				new GameStrut.StaticEntity({
