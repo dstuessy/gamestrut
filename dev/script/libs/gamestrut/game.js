@@ -31,13 +31,18 @@ define([
 		// SET CANVAS
 		this.canvas = document.getElementById( this.canvasID );
 		this.context = canvas.getContext('2d');
+		
+		// SET LEVELS
+		this.levels = options.levels || {};
+		this.current_level = options.current_level || undefined;
+
+		// SET DEBUG MODE
+		this.debugMode = options.debugMode || false;
+
 		// SET CANVAS DIMENSIONS
 		this.setCanvasWidth(this.canvasWidth);
 		this.setCanvasHeight(this.canvasHeight);
 
-		// SET LEVELS
-		this.levels = options.levels || {};
-		this.current_level = options.current_level || undefined;
 		// SET LOGIC LIST
 		this.logics = options.logics || [];
 
@@ -49,9 +54,6 @@ define([
 
 		// SET STEP VARIABLE
 		this.timeStep = options.timeStep || 1/45;
-
-		// SET DEBUG MODE
-		this.debugMode = options.debugMode || false;
 
 		// DISABLE RIGHT CLICK ON CANVAS
 		var disableRightClick = options.disableRightClick || false;
@@ -86,7 +88,9 @@ define([
 					loops++;
 				}
 				if (loops) {
-					//level.world.DrawDebugData();
+					if (self.debugMode) {
+						self.current_level.world.DrawDebugData();
+					}
 					self.clearCanvas();
 					if (self.current_level) {
 						self.current_level.draw(self.context);
@@ -331,7 +335,17 @@ define([
 	 * @param {float} width The width of the canvas.
 	 */
 	Game.prototype.setCanvasWidth = function (width) {
+
+		// SET WIDTH OF NORMAL CANVAS
 		this.canvas.width = width;
+
+		// SET WIDTH OF DEBUG CANVAS
+		if (this.debugMode) {
+
+			var debugCanvas = document.getElementById( this.current_level.debugElId );
+
+			debugCanvas.width = width;
+		}
 	};
 
 	/**
@@ -339,7 +353,17 @@ define([
 	 * @param {float} height The height of the canvas.
 	 */
 	Game.prototype.setCanvasHeight = function (height) {
+
+		// SET HEIGHT OF NORMAL CANVAS
 		this.canvas.height = height;
+
+		// SET HEIGHT OF DEBUG CANVAS
+		if (this.debugMode) {
+
+			var debugCanvas = document.getElementById( this.current_level.debugElId );
+
+			debugCanvas.height = height;
+		}
 	};
 
 	/**

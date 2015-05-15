@@ -13,6 +13,7 @@ define(['gamestrut'], function (GameStrut) {
 		var level = new GameStrut.Level({
 			id: "level_test",
 			gravityV: 80,
+			debugElId: 'debugEl',
 			entities: [
 				new GameStrut.AnimateEntity({
 					id: 'animate_entity_test',
@@ -253,7 +254,8 @@ define(['gamestrut'], function (GameStrut) {
 			canvasHeight: canvasHeight,
 			levels: [level],
 			current_level: level,
-			disableRightClick: true 
+			disableRightClick: true,
+			debugMode: true
 		});
 
 		console.log(game);

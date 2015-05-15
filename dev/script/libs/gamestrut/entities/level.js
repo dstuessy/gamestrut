@@ -1,49 +1,51 @@
 
 define(['libs/gamestrut/functionalStuff/box2dvariables'], function (box2d) {
-   var Level = function (options) {
+	var Level = function (options) {
 
-   	   // CHECK FOR options
-   	   if (typeof options == 'undefined') {
-   	   	   console.log('options need to be defined in parameters for Level class.');
-   	   	   return;
-	   }
-   	   
-   	   // CHECK FOR options.id
-   	   if (typeof options.id == 'undefined') {
-	   	   console.log('id needs to be defined in Level options');
-	   	   return; 
-	   }
+		// CHECK FOR options
+		if (typeof options == 'undefined') {
+			console.error('GameStrut: options need to be defined in parameters for Level class.');
+			return;
+		}
 
-	   // SET PROPERTIES
-	   // SET ID
-	   this.id = options.id;
-	   // SET TYPE
-	   this.type = 'Level';
-	   // SET NEXT AND PREVIOUS
-   	   this.parents = options.parents || undefined;
-   	   this.children = options.children || undefined;
-	   // SET GRAVITY
-       var gravityH = options.gravityH || 0;
-       var gravityV = options.gravityV || 0;
-	   // SET SCALE
-       var SCALE = options.scale || 40;
-       // SET MIN ZINDEX
-	   this.minZIndex = 0;
+		// CHECK FOR options.id
+		if (typeof options.id == 'undefined') {
+			console.error('GameStrut: id needs to be defined in Level options');
+			return; 
+		}
+
+		// SET PROPERTIES
+		// SET ID
+		this.id = options.id;
+		// SET TYPE
+		this.type = 'Level';
+		// SET NEXT AND PREVIOUS
+		this.parents = options.parents || undefined;
+		this.children = options.children || undefined;
+		// SET GRAVITY
+		var gravityH = options.gravityH || 0;
+		var gravityV = options.gravityV || 0;
+		// SET SCALE
+		var SCALE = options.scale || 40;
+		// SET MIN ZINDEX
+		this.minZIndex = 0;
+		// SET DEBUG ELEMENT ID
+		this.debugElId = options.debugElId || undefined;
 
 
-       // SETUP WORLD
-       var gravity = new box2d.b2Vec2( gravityH, gravityV);
-       this.world = new box2d.b2World(gravity, true);
-       
-       // SET ENTITIES
-       this.entities = options.entities || [];
-       // SET LEVEL FOR ENTITIES AND INIT THEIR PHYSICS
-	   for (var key in this.entities) {
-	   	   var entity = this.entities[key];
-	   	   if (typeof entity.level == 'undefined') {
-	   	   	   entity.setLevel(this);
-		   }
-	   }
+		// SETUP WORLD
+		var gravity = new box2d.b2Vec2( gravityH, gravityV);
+		this.world = new box2d.b2World(gravity, true);
+
+		// SET ENTITIES
+		this.entities = options.entities || [];
+		// SET LEVEL FOR ENTITIES AND INIT THEIR PHYSICS
+		for (var key in this.entities) {
+			var entity = this.entities[key];
+			if (typeof entity.level == 'undefined') {
+				entity.setLevel(this);
+			}
+		}
 
 		// SET UP CONTROLLERS
 		for (var controllerIndex in this.controllers) {
@@ -83,193 +85,198 @@ define(['libs/gamestrut/functionalStuff/box2dvariables'], function (box2d) {
 		// SET COLLISIONS
 		this.collisions = tempArray || [];
 
-       // LOGIC FUNCTIONS
-       this.logic = options.logic || [];
+		// LOGIC FUNCTIONS
+		this.logic = options.logic || [];
 
-       /*
-       // setup debug draw
-       var debugDraw = new box2d.b2DebugDraw();
-       debugDraw.SetSprite(document.getElementById('debug').getContext('2d'));
-       debugDraw.SetDrawScale(SCALE);
-       debugDraw.SetFillAlpha(0.5);
-       debugDraw.SetFlags(box2d.b2DebugDraw.e_shapeBit | box2d.b2DebugDraw.e_jointBit);
-       this.world.SetDebugDraw(debugDraw);
-       /**/
+		// SETUP DEBUG PRINTING
+		if ( this.debugElId != null ) {
 
-       /**
-       	* Renders entities on canvas in order
-       	* of zindex followed by an indiscriminate
-       	* order within zindex.
-       	* @return {undefined}
-       	*/
-       this.draw = function (context) {
+			console.log( 'setting up debugElId' );
 
-		   // GET ZINDEXED ENTITIES
-           var zIndexes = this.getEntitiesByZIndex() || [];
+			var debugDraw = new box2d.b2DebugDraw();
 
-		   // FOR EACH ZINDEX IN zIndexes
-		   for (var i in zIndexes) {
+			debugDraw.SetSprite(document.getElementById( this.debugElId ).getContext('2d'));
+			debugDraw.SetDrawScale(SCALE);
+			debugDraw.SetFillAlpha(0.5);
+			debugDraw.SetFlags(box2d.b2DebugDraw.e_shapeBit | box2d.b2DebugDraw.e_jointBit);
 
-			   // GET ZINDEX
-			   var zindex = zIndexes[i];
+			this.world.SetDebugDraw(debugDraw);
+		}
 
-			   // FOR EACH ENTITY IN zindex
-			   for (var key in zindex) {
+		/**
+		 * Renders entities on canvas in order
+		 * of zindex followed by an indiscriminate
+		 * order within zindex.
+		 * @return {undefined}
+		 */
+		this.draw = function (context) {
 
-				   // GET ENTITY
-				   var entity = zindex[key];
+			// GET ZINDEXED ENTITIES
+			var zIndexes = this.getEntitiesByZIndex() || [];
 
-				   // DRAW ENTITY
-				   entity.draw(context);
-			   }
-		   }
-       };
+			// FOR EACH ZINDEX IN zIndexes
+			for (var i in zIndexes) {
 
-	   /**
-	   	* Returns an object that holds entities, backgrounds, etc
-	   	* in their designated zindexes.
-	   	*
-	   	* The zindexes are held in a hash table 
-	   	* where each zindex is a hash as well.
-	   	*
-	   	* Hash needs to be converted into array
-	   	* after the hash is made as the minimum
-	   	* zIndex level needs to be set before 
-	   	* it can be converted into an array 
-	   	* and sorted, of course.
-	   	*
-	   	* @return {array} Array containing zindexed level entities.
-	   	*/
-       this.getEntitiesByZIndex = function () {
+				// GET ZINDEX
+				var zindex = zIndexes[i];
 
-       	   var self = this;
+				// FOR EACH ENTITY IN zindex
+				for (var key in zindex) {
 
-		   // SET ZINDEX OBJECT 
-		   var zIndex = {};
+					// GET ENTITY
+					var entity = zindex[key];
 
-		   // FOR EACH ENTITY
-           for (var key in this.entities) {
+					// DRAW ENTITY
+					entity.draw(context);
+				}
+			}
+		};
 
-			   // GET ENTITY
-			   var entity = this.entities[key];
+		/**
+		 * Returns an object that holds entities, backgrounds, etc
+		 * in their designated zindexes.
+		 *
+		 * The zindexes are held in a hash table 
+		 * where each zindex is a hash as well.
+		 *
+		 * Hash needs to be converted into array
+		 * after the hash is made as the minimum
+		 * zIndex level needs to be set before 
+		 * it can be converted into an array 
+		 * and sorted, of course.
+		 *
+		 * @return {array} Array containing zindexed level entities.
+		 */
+		this.getEntitiesByZIndex = function () {
 
-			   // ENSURE ZINDEX ENTRY IS AN OBJECT 
-			   zIndex[entity.zindex] = (typeof zIndex[entity.zindex] != 'object') ? {} : zIndex[entity.zindex];
+			var self = this;
 
-			   // SET MIN ZINDEX
-			   self.minZIndex = (Number(entity.zindex) < this.minZIndex) ? Number(entity.zindex) : this.minZIndex;
-			   
-			   // ADD ENTITY TO APPROPRIATE ZINDEX UNDER ITS ID
-			   zIndex[entity.zindex][entity.id] = entity;
-           }
+			// SET ZINDEX OBJECT 
+			var zIndex = {};
 
-           //TURN zIndex INTO ARRAY AND SORT IT
-		   var array = [];
-		   for (var key in zIndex) {
+			// FOR EACH ENTITY
+			for (var key in this.entities) {
 
-			   // GET zindex OBJECT
-		   	   var obj = zIndex[key];
-		   	   // SET THE INDEX RELATIVE TO MINIMUM INDEX (min being turned into 0)
-		   	   var index = self.minZIndex - Number(key);
+				// GET ENTITY
+				var entity = this.entities[key];
 
-			   // ADD zindex object to the array
-		   	   array[index] = obj;
-		   }
+				// ENSURE ZINDEX ENTRY IS AN OBJECT 
+				zIndex[entity.zindex] = (typeof zIndex[entity.zindex] != 'object') ? {} : zIndex[entity.zindex];
 
-           return array;
-	   };
+				// SET MIN ZINDEX
+				self.minZIndex = (Number(entity.zindex) < this.minZIndex) ? Number(entity.zindex) : this.minZIndex;
 
-	   /**
-	   	* Returns entity under key of "id".
-	   	*
-	   	* @param {string} id String representing key and id of entity.
-	   	* @return {undefined}
-	   	*/
-       this.getEntity = function(id){
-           return this.entities[id];
-       };
+				// ADD ENTITY TO APPROPRIATE ZINDEX UNDER ITS ID
+				zIndex[entity.zindex][entity.id] = entity;
+			}
 
-       /**
-       	* Adds entities to the game level
-        *
-        * @param {Entity} entity An object of entity type.
-        * @return {undefined}
-        */
-       this.addEntity = function(entity){
-           this.entities[entity.id] = entity;
-       };
+			//TURN zIndex INTO ARRAY AND SORT IT
+			var array = [];
+			for (var key in zIndex) {
 
-       /**
-        * Adds a logical function to this level.
-        *
-        * Will be executed after logic of game.
-        * 
-        * @param {function} func A JavaScript function of choice.
-        * @return {undefined}
-        */
-       this.addLogic = function(func){
-           this.logic.push(func);
-       };
+				// GET zindex OBJECT
+				var obj = zIndex[key];
+				// SET THE INDEX RELATIVE TO MINIMUM INDEX (min being turned into 0)
+				var index = self.minZIndex - Number(key);
 
-       /**
-        * Sets the background of the level.
-        * @param {object Background} background A Background object
-        * @return {undefined}
-        */
-       this.setBackground = function(background){
-           this.background = background;
-       };
+				// ADD zindex object to the array
+				array[index] = obj;
+			}
 
-       /**
-        * Sets the gravity of the world in this level
-        *  - look at world variable at the top.
-        * @param {float} h The magnitude of horizontal gravity.
-        * @param {float} v The magnitude of vertical gravity.
-        * @return {undefined}
-        */
-       this.setGravity = function(h,v){
-           this.world.gravity = new box2d.b2Vec2(h,v);
-       };
+			return array;
+		};
 
-       /* SCROLL X */
-       this.scrollX = function(){
-           var player = level.player,
-               scrollspeed = player.body.GetLinearVelocity().x * 40,
-               background = level.background,
-               staticBlocks = level.staticBlocks,
-               decorativeBlocks = level.decorativeBlocks,
-               npcs = level.npcs;
-           
-           if(scrollspeed != 0){
-                   background.x -= scrollspeed/10;
-           }
-           for(var i = 0; i in staticBlocks; i++){
-               //staticBlocks[i].body. += scrollspeed;
-           }
-       };
+		/**
+		 * Returns entity under key of "id".
+		 *
+		 * @param {string} id String representing key and id of entity.
+		 * @return {undefined}
+		 */
+		this.getEntity = function(id){
+			return this.entities[id];
+		};
 
-       /* SCROLL Y */
-       this.scrollY = function(){
-           var player = level.player,
-               scrollspeed = player.body.GetLinearVelocity().y,
-               background = level.background,
-               staticBlocks = level.staticBlocks,
-               decorativeBlocks = level.decorativeBlocks,
-               npcs = level.npcs;
-           
-           if(scrollspeed != 0){
-                   background.y -= scrollspeed/10;
-           }
-           for(var i = 0; i in staticBlocks; i++){
-               //staticBlocks[i].body.GetPosition().y += scrollspeed;
-           }
-       };
+		/**
+		 * Adds entities to the game level
+		 *
+		 * @param {Entity} entity An object of entity type.
+		 * @return {undefined}
+		 */
+		this.addEntity = function(entity){
+			this.entities[entity.id] = entity;
+		};
 
-       // SET INITIALIZE
-       this.initialize = options.initialize || function () {};
-       // EXECUTE INITIALIZE IN WRAPPER FOR INITIALIZE for 'this' to be this level.
-	   this.initialize();
-   };
-   
-   return Level;
+		/**
+		 * Adds a logical function to this level.
+		 *
+		 * Will be executed after logic of game.
+		 * 
+		 * @param {function} func A JavaScript function of choice.
+		 * @return {undefined}
+		 */
+		this.addLogic = function(func){
+			this.logic.push(func);
+		};
+
+		/**
+		 * Sets the background of the level.
+		 * @param {object Background} background A Background object
+		 * @return {undefined}
+		 */
+		this.setBackground = function(background){
+			this.background = background;
+		};
+
+		/**
+		 * Sets the gravity of the world in this level
+		 *  - look at world variable at the top.
+		 * @param {float} h The magnitude of horizontal gravity.
+		 * @param {float} v The magnitude of vertical gravity.
+		 * @return {undefined}
+		 */
+		this.setGravity = function(h,v){
+			this.world.gravity = new box2d.b2Vec2(h,v);
+		};
+
+		/* SCROLL X */
+		this.scrollX = function(){
+			var player = level.player,
+				scrollspeed = player.body.GetLinearVelocity().x * 40,
+				background = level.background,
+				staticBlocks = level.staticBlocks,
+				decorativeBlocks = level.decorativeBlocks,
+				npcs = level.npcs;
+
+			if(scrollspeed != 0){
+				background.x -= scrollspeed/10;
+			}
+			for(var i = 0; i in staticBlocks; i++){
+				//staticBlocks[i].body. += scrollspeed;
+			}
+		};
+
+		/* SCROLL Y */
+		this.scrollY = function(){
+			var player = level.player,
+				scrollspeed = player.body.GetLinearVelocity().y,
+				background = level.background,
+				staticBlocks = level.staticBlocks,
+				decorativeBlocks = level.decorativeBlocks,
+				npcs = level.npcs;
+
+			if(scrollspeed != 0){
+				background.y -= scrollspeed/10;
+			}
+			for(var i = 0; i in staticBlocks; i++){
+				//staticBlocks[i].body.GetPosition().y += scrollspeed;
+			}
+		};
+
+		// SET INITIALIZE
+		this.initialize = options.initialize || function () {};
+		// EXECUTE INITIALIZE IN WRAPPER FOR INITIALIZE for 'this' to be this level.
+		this.initialize();
+	};
+
+	return Level;
 });
