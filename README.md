@@ -4,6 +4,7 @@ gamestrut.js
 ### Todo list:
 
 * &#10004; Remove jQuery requirement.
+* &#10004; box2d debug canvas rendering.
 * Level scrolling i.e. scroll level horizontally/vertically when character is at edge of canvas
 * &#10004; "z-indexed" entities.
 * Make background zoomable.
