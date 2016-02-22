@@ -1,6 +1,8 @@
 gamestrut.js
 ==============
 
+**This project has been discontinued and might undergo a refactored version in the near future.**
+
 ### Todo list:
 
 * &#10004; Remove jQuery requirement.
